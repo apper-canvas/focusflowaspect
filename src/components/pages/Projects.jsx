@@ -7,6 +7,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
+import ConfirmationPopup from "@/components/organisms/ConfirmationPopup";
 import { projectService } from "@/services/api/projectService";
 import { toast } from "react-toastify";
 
@@ -16,7 +17,9 @@ const Projects = () => {
   const [error, setError] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
-
+  const [deletePopupVisible, setDeletePopupVisible] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     client: "",
@@ -90,17 +93,33 @@ const Projects = () => {
     setIsCreating(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this project?")) return;
+const handleDelete = (id) => {
+    const project = projects.find(p => p.Id === id);
+    setProjectToDelete(project);
+    setDeletePopupVisible(true);
+  };
 
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
+    
+    setIsDeleting(true);
     try {
-      await projectService.delete(id);
-      setProjects(projects.filter(p => p.Id !== id));
+      await projectService.delete(projectToDelete.Id);
+      setProjects(projects.filter(p => p.Id !== projectToDelete.Id));
       toast.success("Project deleted successfully");
+      setDeletePopupVisible(false);
+      setProjectToDelete(null);
     } catch (error) {
       toast.error("Failed to delete project");
       console.error("Delete project error:", error);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const cancelDelete = () => {
+    setDeletePopupVisible(false);
+    setProjectToDelete(null);
   };
 
   const resetForm = () => {
@@ -312,7 +331,21 @@ const Projects = () => {
             </div>
           </Card>
         </div>
-      </div>
+</div>
+
+      {/* Delete Confirmation Popup */}
+      <ConfirmationPopup
+        isVisible={deletePopupVisible}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${projectToDelete?.name}"? This action cannot be undone and will remove all associated time entries.`}
+        confirmText="Delete Project"
+        cancelText="Keep Project"
+        variant="danger"
+        icon="Trash2"
+        isSubmitting={isDeleting}
+      />
     </div>
   );
 };
