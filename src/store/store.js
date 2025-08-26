@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { syncSlice } from "@/store/slices/syncSlice";
 
 // Simple app reducer to provide valid store until feature slices are added
 const appReducer = (state = { loading: false }, action) => {
@@ -11,6 +12,7 @@ const appReducer = (state = { loading: false }, action) => {
 // Root reducer with placeholder - can be expanded with feature slices
 const rootReducer = {
   app: appReducer,
+  sync: syncSlice.reducer,
   // Add feature reducers here as they're created
   // e.g., timer: timerSlice.reducer,
   // projects: projectsSlice.reducer,
