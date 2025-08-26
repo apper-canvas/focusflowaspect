@@ -1,7 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-// Initial root reducer - can be expanded with feature slices
+// Simple app reducer to provide valid store until feature slices are added
+const appReducer = (state = { loading: false }, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
+
+// Root reducer with placeholder - can be expanded with feature slices
 const rootReducer = {
+  app: appReducer,
   // Add feature reducers here as they're created
   // e.g., timer: timerSlice.reducer,
   // projects: projectsSlice.reducer,
