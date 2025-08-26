@@ -23,16 +23,17 @@ const IdleDetectionPopup = ({
     { id: "other", label: "Other", icon: "MoreHorizontal", color: "bg-gray-500 text-white" }
   ];
 
+// Handle backdrop clicks
+  const handleBackdropClick = (event) => {
+    if (event.target === event.currentTarget && !isSubmitting) {
+      handleDismiss();
+    }
+  };
+
   // Handle escape key press
   useEffect(() => {
-const handleKeyDown = (event) => {
+    const handleKeyDown = (event) => {
       if (event.key === 'Escape' && isVisible && !isSubmitting) {
-        handleDismiss();
-      }
-    };
-
-    const handleBackdropClick = (event) => {
-      if (event.target === event.currentTarget && !isSubmitting) {
         handleDismiss();
       }
     };
