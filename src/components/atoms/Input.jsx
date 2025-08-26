@@ -6,6 +6,21 @@ const Input = React.forwardRef(({
   type = "text", 
   ...props 
 }, ref) => {
+  // Filter out non-DOM props to prevent React warnings
+  const {
+    helpText,
+    helptext,
+    onValidate,
+    validation,
+    validationRules,
+    errorMessage,
+    successMessage,
+    hint,
+    description,
+    customRenderer,
+    ...domProps
+  } = props;
+
   return (
     <input
       type={type}
@@ -19,7 +34,7 @@ const Input = React.forwardRef(({
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
-      {...props}
+      {...domProps}
     />
   );
 });
