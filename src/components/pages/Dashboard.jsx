@@ -53,8 +53,8 @@ const Dashboard = () => {
     setRefreshKey(prev => prev + 1);
   };
 
-  return (
-<div className="max-w-7xl mx-auto">
+return (
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 font-display">Dashboard</h1>
         <p className="text-gray-600">Track your time with AI-powered precision</p>

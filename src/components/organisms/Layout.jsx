@@ -12,8 +12,8 @@ const Layout = () => {
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} />
         
-        <main className="flex-1 relative overflow-y-auto focus:outline-none custom-scrollbar">
-          <div className="py-6 px-4 lg:px-6 max-w-7xl mx-auto">
+        <main className="flex-1 relative overflow-y-auto focus:outline-none custom-scrollbar pt-0 lg:pt-0">
+          <div className="py-6 px-4 lg:px-6 max-w-7xl mx-auto mt-16 lg:mt-0">
             <Outlet />
           </div>
         </main>

@@ -72,14 +72,16 @@ useEffect(() => {
           pauseOnHover
 theme="light"
         />
-        {idleState.isIdle && (
-          <IdleDetectionPopup
-            isOpen={idleState.isIdle}
-            idleTime={idleState.idleTime}
-            customPrompt={idleState.customPrompt}
-            onCategorize={handleIdleCategorize}
-            onDismiss={handleIdleDismiss}
-          />
+{idleState.isIdle && (
+          <div className="fixed inset-0 z-[60]">
+            <IdleDetectionPopup
+              isOpen={idleState.isIdle}
+              idleTime={idleState.idleTime}
+              customPrompt={idleState.customPrompt}
+              onCategorize={handleIdleCategorize}
+              onDismiss={handleIdleDismiss}
+            />
+          </div>
         )}
       </div>
     </BrowserRouter>

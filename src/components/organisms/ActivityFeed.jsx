@@ -171,18 +171,18 @@ const ActivityFeed = ({ onEntryCreated }) => {
                 key={activity.id}
                 className="group p-4 bg-gradient-to-r from-warning/5 to-info/5 rounded-lg border-2 border-dashed border-warning/30 hover:border-warning/50 transition-all duration-200"
               >
-<div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
-                  <div className="flex items-start space-x-3 flex-1 min-w-0">
+<div className="space-y-3">
+                  <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 p-2 bg-white rounded-lg shadow-sm">
                       <ApperIcon name={activity.icon} size={16} className="text-primary" />
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mb-1">
-                        <span className="font-medium text-gray-900 text-sm">
-                          {activity.app}
-                        </span>
-                        <div className="flex items-center space-x-2">
+                      <div className="flex flex-col space-y-1 mb-2">
+                        <div className="flex items-center space-x-2 flex-wrap">
+                          <span className="font-medium text-gray-900 text-sm">
+                            {activity.app}
+                          </span>
                           <Badge variant="default" className="text-xs">
                             {activity.category}
                           </Badge>
@@ -190,20 +190,20 @@ const ActivityFeed = ({ onEntryCreated }) => {
                             {formatTime(activity.timestamp)}
                           </span>
                         </div>
-                      </div>
-                      
-                      <p className="text-sm text-gray-700 mb-2">
-                        {activity.context}
-                      </p>
-                      
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-xs text-gray-500">
-                        <span>Duration: {formatDuration(activity.duration)}</span>
-                        <span>Confidence: {activity.confidence}%</span>
+                        
+                        <p className="text-sm text-gray-700">
+                          {activity.context}
+                        </p>
+                        
+                        <div className="flex items-center space-x-4 text-xs text-gray-500">
+                          <span>Duration: {formatDuration(activity.duration)}</span>
+                          <span>Confidence: {activity.confidence}%</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end sm:justify-start space-x-2 sm:ml-4 flex-shrink-0">
+                  <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100">
                     <Button
                       size="sm"
                       variant="success"
