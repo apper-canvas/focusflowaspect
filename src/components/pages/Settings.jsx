@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import FormField from "@/components/molecules/FormField";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
-import FormField from "@/components/molecules/FormField";
-import ApperIcon from "@/components/ApperIcon";
-import { toast } from "react-toastify";
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -11,11 +11,18 @@ const Settings = () => {
     breakDuration: 5,
     longBreakDuration: 15,
     autoStart: false,
-    soundNotifications: true,
+soundNotifications: true,
     darkMode: false,
     weeklyGoal: 40,
     timezone: "local",
-    exportFormat: "csv"
+    exportFormat: "csv",
+    // Calendar sync settings
+    googleCalendarEnabled: false,
+    outlookCalendarEnabled: false,
+    appleCalendarEnabled: false,
+    autoImportMeetings: true,
+    syncFrequency: "hourly",
+    includePersonalMeetings: false
   });
 
   const [activeSection, setActiveSection] = useState("pomodoro");
@@ -24,10 +31,10 @@ const Settings = () => {
     { id: "pomodoro", label: "Pomodoro Timer", icon: "Timer" },
     { id: "notifications", label: "Notifications", icon: "Bell" },
     { id: "goals", label: "Goals & Targets", icon: "Target" },
-    { id: "privacy", label: "Privacy & Data", icon: "Shield" },
-    { id: "export", label: "Export Settings", icon: "Download" }
+{ id: "privacy", label: "Privacy & Data", icon: "Shield" },
+    { id: "export", label: "Export Settings", icon: "Download" },
+    { id: "calendar", label: "Calendar Sync", icon: "Calendar" }
   ];
-
   const handleSave = async () => {
     try {
       // In a real app, this would save to localStorage or API
@@ -241,8 +248,179 @@ const Settings = () => {
           <li>• Date range filtering</li>
           <li>• Invoice-ready formatting</li>
         </ul>
-      </div>
+</div>
     </div>
+  );
+
+  const renderCalendarSyncSettings = () => (
+    <div className="space-y-4">
+      <div className="p-4 bg-info/10 rounded-lg border border-info/20">
+        <div className="flex items-center space-x-2 mb-2">
+          <ApperIcon name="Calendar" size={16} className="text-info" />
+          <span className="text-sm font-medium text-gray-900">Calendar Integration</span>
+</div>
+        <p className="text-sm text-gray-600">
+          Automatically import your meeting schedule to avoid conflicts with your focused work time.
+        </p>
+      </div>
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Calendar Providers</h4>
+        
+        {/* Google Calendar */}
+        <div className="flex items-center justify-between p-4 bg-white border rounded-lg">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+              <ApperIcon name="Calendar" size={16} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">Google Calendar</p>
+              <p className="text-xs text-gray-500">
+                {settings.googleCalendarEnabled ? "Connected" : "Not connected"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            {settings.googleCalendarEnabled && (
+              <div className="text-success">
+                <ApperIcon name="Check" size={16} />
+              </div>
+            )}
+            <Button 
+              size="sm" 
+              variant={settings.googleCalendarEnabled ? "secondary" : "primary"}
+              onClick={() => setSettings({ 
+                ...settings, 
+                googleCalendarEnabled: !settings.googleCalendarEnabled 
+              })}
+            >
+              {settings.googleCalendarEnabled ? "Disconnect" : "Connect"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Outlook Calendar */}
+        <div className="flex items-center justify-between p-4 bg-white border rounded-lg">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <ApperIcon name="Calendar" size={16} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">Outlook Calendar</p>
+              <p className="text-xs text-gray-500">
+                {settings.outlookCalendarEnabled ? "Connected" : "Not connected"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            {settings.outlookCalendarEnabled && (
+              <div className="text-success">
+                <ApperIcon name="Check" size={16} />
+              </div>
+            )}
+            <Button 
+              size="sm" 
+              variant={settings.outlookCalendarEnabled ? "secondary" : "primary"}
+              onClick={() => setSettings({ 
+                ...settings, 
+                outlookCalendarEnabled: !settings.outlookCalendarEnabled 
+              })}
+            >
+              {settings.outlookCalendarEnabled ? "Disconnect" : "Connect"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Apple Calendar */}
+        <div className="flex items-center justify-between p-4 bg-white border rounded-lg">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center">
+              <ApperIcon name="Calendar" size={16} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">Apple Calendar</p>
+              <p className="text-xs text-gray-500">
+                {settings.appleCalendarEnabled ? "Connected" : "Not connected"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            {settings.appleCalendarEnabled && (
+              <div className="text-success">
+                <ApperIcon name="Check" size={16} />
+              </div>
+            )}
+            <Button 
+              size="sm" 
+              variant={settings.appleCalendarEnabled ? "secondary" : "primary"}
+              onClick={() => setSettings({ 
+                ...settings, 
+                appleCalendarEnabled: !settings.appleCalendarEnabled 
+              })}
+            >
+              {settings.appleCalendarEnabled ? "Disconnect" : "Connect"}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Import Settings */}
+      {(settings.googleCalendarEnabled || settings.outlookCalendarEnabled || settings.appleCalendarEnabled) && (
+        <div className="space-y-4 pt-4 border-t">
+          <h4 className="text-sm font-medium text-gray-900">Import Preferences</h4>
+          
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="autoImportMeetings"
+              checked={settings.autoImportMeetings}
+              onChange={(e) => setSettings({ ...settings, autoImportMeetings: e.target.checked })}
+              className="rounded border-gray-300 text-primary focus:ring-primary"
+/>
+            <label htmlFor="autoImportMeetings" className="text-sm text-gray-700">
+              Automatically import meetings as "busy" time
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="includePersonalMeetings"
+              checked={settings.includePersonalMeetings}
+              onChange={(e) => setSettings({ ...settings, includePersonalMeetings: e.target.checked })}
+              className="rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <label htmlFor="includePersonalMeetings" className="text-sm text-gray-700">
+              Include personal meetings (marked as "Busy")
+            </label>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-900 mb-1.5 block">
+              Sync Frequency
+            </label>
+            <select
+              value={settings.syncFrequency}
+              onChange={(e) => setSettings({ ...settings, syncFrequency: e.target.value })}
+              className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+            >
+              <option value="realtime">Real-time (when possible)</option>
+              <option value="hourly">Every hour</option>
+              <option value="daily">Daily</option>
+              <option value="manual">Manual only</option>
+            </select>
+          </div>
+
+          <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
+            <div className="flex items-center space-x-2 mb-2">
+              <ApperIcon name="Shield" size={16} className="text-warning" />
+              <span className="text-sm font-medium text-gray-900">Privacy Notice</span>
+            </div>
+            <p className="text-sm text-gray-600">
+              Only meeting times and availability status are imported. Meeting details, attendees, and content remain private and are never accessed or stored.
+            </p>
+          </div>
+        </div>
+      )}
+</div>
   );
 
   const renderContent = () => {
@@ -257,6 +435,8 @@ const Settings = () => {
         return renderPrivacySettings();
       case "export":
         return renderExportSettings();
+      case "calendar":
+        return renderCalendarSyncSettings();
       default:
         return renderPomodoroSettings();
     }
