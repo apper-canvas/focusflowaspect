@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "name": "frontend",
+    "color": "#3B82F6"
+  },
+  {
+    "Id": 2,
+    "name": "backend",
+    "color": "#10B981"
+  },
+  {
+    "Id": 3,
+    "name": "react",
+    "color": "#61DAFB"
+  },
+  {
+    "Id": 4,
+    "name": "design",
+    "color": "#EC4899"
+  },
+  {
+    "Id": 5,
+    "name": "ui",
+    "color": "#8B5CF6"
+  },
+  {
+    "Id": 6,
+    "name": "api",
+    "color": "#F59E0B"
+  },
+  {
+    "Id": 7,
+    "name": "research",
+    "color": "#6B7280"
+  },
+  {
+    "Id": 8,
+    "name": "ai",
+    "color": "#7C6FD8"
+  },
+  {
+    "Id": 9,
+    "name": "standup",
+    "color": "#14B8A6"
+  },
+  {
+    "Id": 10,
+    "name": "team",
+    "color": "#F97316"
+  },
+  {
+    "Id": 11,
+    "name": "development",
+    "color": "#EF4444"
+  },
+  {
+    "Id": 12,
+    "name": "css",
+    "color": "#06B6D4"
+  },
+  {
+    "Id": 13,
+    "name": "testing",
+    "color": "#84CC16"
+  },
+  {
+    "Id": 14,
+    "name": "qa",
+    "color": "#A855F7"
+  },
+  {
+    "Id": 15,
+    "name": "documentation",
+    "color": "#6366F1"
+  },
+  {
+    "Id": 16,
+    "name": "writing",
+    "color": "#F43F5E"
+  }
+]

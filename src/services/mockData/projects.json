@@ -1,0 +1,50 @@
+[
+  {
+    "Id": 1,
+    "name": "FocusFlow Development",
+    "color": "#5B4FB6",
+    "defaultBillable": true,
+    "hourlyRate": 85,
+    "client": "Internal"
+  },
+  {
+    "Id": 2,
+    "name": "Client Website",
+    "color": "#3B82F6",
+    "defaultBillable": true,
+    "hourlyRate": 120,
+    "client": "Acme Corp"
+  },
+  {
+    "Id": 3,
+    "name": "Meeting",
+    "color": "#10B981",
+    "defaultBillable": true,
+    "hourlyRate": 100,
+    "client": "Various"
+  },
+  {
+    "Id": 4,
+    "name": "Personal Learning",
+    "color": "#8B5CF6",
+    "defaultBillable": false,
+    "hourlyRate": 0,
+    "client": "Personal"
+  },
+  {
+    "Id": 5,
+    "name": "Admin Tasks",
+    "color": "#F59E0B",
+    "defaultBillable": false,
+    "hourlyRate": 0,
+    "client": "Internal"
+  },
+  {
+    "Id": 6,
+    "name": "Marketing",
+    "color": "#EC4899",
+    "defaultBillable": true,
+    "hourlyRate": 95,
+    "client": "Internal"
+  }
+]

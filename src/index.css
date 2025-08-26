@@ -1,0 +1,82 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Toast overrides */
+.Toastify__toast-container {
+  z-index: 9999;
+}
+
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  min-height: auto;
+  padding: 12px 16px;
+}
+
+.Toastify__toast--success {
+  background: #6BCF7F;
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: #FF6B6B;
+  color: white;
+}
+
+.Toastify__toast--info {
+  background: #4ECDC4;
+  color: white;
+}
+
+.Toastify__close-button {
+  color: white;
+  opacity: 0.8;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Timer animation */
+@keyframes timer-tick {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.01); }
+}
+
+.timer-tick {
+  animation: timer-tick 1s infinite;
+}
+
+/* Project colors */
+.project-blue { background-color: #3B82F6; }
+.project-green { background-color: #10B981; }
+.project-purple { background-color: #8B5CF6; }
+.project-red { background-color: #EF4444; }
+.project-yellow { background-color: #F59E0B; }
+.project-pink { background-color: #EC4899; }
+.project-indigo { background-color: #6366F1; }
+.project-teal { background-color: #14B8A6; }
+
+/* Form enhancements */
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #5B4FB6;
+  outline-offset: 2px;
+}
