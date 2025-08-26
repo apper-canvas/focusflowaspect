@@ -377,11 +377,9 @@ const GoalProgressDisplay = () => {
             </div>
           </div>
         </div>
-      </Card>
+</Card>
     </Card>
   );
 };
-
-export default Reports;
 
 export default Reports;

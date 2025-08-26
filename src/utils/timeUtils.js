@@ -97,9 +97,9 @@ export const generateTimeSlots = (startTime, endTime) => {
   const end = new Date(endTime);
   
   while (current <= end) {
-    slots.push({
+slots.push({
       time: formatTime(current.getTime()),
-});
+    });
     current.setMinutes(current.getMinutes() + 30);
   }
   
@@ -192,9 +192,8 @@ export const generateGoalRecommendations = (timeEntries, currentGoals = {}) => {
   if (topProject && !currentGoals[`project_${topProject[0]}`]) {
     recommendations.push({
       type: 'project',
-      project: topProject[0],
-      goal: Math.ceil(topProject[1] / 3600 * 1.2), // 20% increase
-reason: 'Your most active project this week'
+goal: Math.ceil(topProject[1] / 3600 * 1.2), // 20% increase
+      reason: 'Your most active project this week'
     });
   }
   
@@ -258,14 +257,6 @@ export const checkGoalAchievements = (timeEntries, goals) => {
   
   return achievements;
 };
-export const getGoalStatus = (progress) => {
-  if (progress >= 100) return { status: 'completed', color: 'success', message: 'Goal achieved!' };
-  if (progress >= 80) return { status: 'on-track', color: 'primary', message: 'Excellent progress' };
-  if (progress >= 60) return { status: 'good', color: 'info', message: 'Good pace' };
-  if (progress >= 40) return { status: 'behind', color: 'warning', message: 'Needs attention' };
-  return { status: 'critical', color: 'error', message: 'Action required' };
-};
-
 export const calculateRemainingTime = (current, target) => {
   const remaining = Math.max(target - current, 0);
   return {
@@ -273,41 +264,6 @@ export const calculateRemainingTime = (current, target) => {
     minutes: Math.round((remaining % 1) * 60),
     total: remaining
   };
-};
-
-export const generateGoalRecommendations = (goals, stats) => {
-  const recommendations = [];
-  
-  if (!goals || !stats) return recommendations;
-  
-  const todayHours = stats.today / 3600;
-  const weekHours = stats.week / 3600;
-  const billableHours = stats.billable / 3600;
-  
-  // Daily goal recommendations
-  const dailyProgress = calculateGoalProgress(todayHours, goals.daily.workHours);
-  if (dailyProgress < 50 && new Date().getHours() > 14) {
-    recommendations.push({
-      type: 'daily',
-      priority: 'high',
-      message: `You're behind on daily goals. Consider focusing on high-priority tasks.`,
-      action: 'Start a focus session'
-    });
-  }
-  
-  // Weekly goal recommendations
-  const weeklyProgress = calculateGoalProgress(billableHours, goals.weekly.billableHours);
-  const dayOfWeek = new Date().getDay();
-  if (weeklyProgress < (dayOfWeek / 7 * 100) && dayOfWeek > 2) {
-    recommendations.push({
-      type: 'weekly',
-      priority: 'medium',
-      message: `Weekly billable hours are falling behind schedule.`,
-      action: 'Schedule more client work'
-    });
-  }
-  
-  return recommendations;
 };
 
 export const getProductivityTrend = (currentWeek, previousWeek) => {
@@ -318,173 +274,4 @@ export const getProductivityTrend = (currentWeek, previousWeek) => {
   if (change > 10) return { trend: 'up', change: Math.round(change) };
   if (change < -10) return { trend: 'down', change: Math.round(Math.abs(change)) };
   return { trend: 'stable', change: Math.round(Math.abs(change)) };
-};
-
-export const calculateProductivityScore = (goals, stats) => {
-  if (!goals || !stats) return 0;
-  
-  const todayHours = stats.today / 3600;
-  const weekHours = stats.week / 3600;
-  const billableHours = stats.billable / 3600;
-  
-  const dailyScore = Math.min((todayHours / goals.daily.workHours) * 40, 40);
-  const weeklyScore = Math.min((billableHours / goals.weekly.billableHours) * 40, 40);
-  
-  let projectScore = 0;
-  if (goals.projects && goals.projects.length > 0) {
-    const avgProjectProgress = goals.projects.reduce((sum, project) => {
-      return sum + Math.min((weekHours / project.weeklyTarget) * 100, 100);
-    }, 0) / goals.projects.length;
-    projectScore = (avgProjectProgress / 100) * 20;
-  } else {
-    projectScore = 20; // Full score if no projects defined
-  }
-  
-  return Math.round(dailyScore + weeklyScore + projectScore);
-};
-
-export const getGoalInsights = (goals, stats) => {
-  const insights = [];
-  
-  if (!goals || !stats) return insights;
-  
-  const todayHours = stats.today / 3600;
-  const weekHours = stats.week / 3600;
-  const billableHours = stats.billable / 3600;
-  
-  // Time distribution insights
-  if (stats.week > 0) {
-    const billablePercentage = (billableHours / (weekHours || 1)) * 100;
-    if (billablePercentage > 80) {
-      insights.push({
-        type: 'positive',
-        message: `Excellent billable time ratio: ${Math.round(billablePercentage)}%`
-      });
-    } else if (billablePercentage < 50) {
-      insights.push({
-        type: 'improvement',
-        message: `Consider increasing billable work focus (currently ${Math.round(billablePercentage)}%)`
-      });
-    }
-  }
-  
-  // Daily consistency insights
-  const dailyAverage = weekHours / 7;
-  if (todayHours > dailyAverage * 1.2) {
-    insights.push({
-      type: 'positive',
-      message: 'Great productivity day - above weekly average!'
-    });
-  }
-  
-  return insights;
-};
-
-export const checkGoalAchievements = (goals, stats) => {
-  const achievements = [];
-  
-  if (!goals || !stats) return achievements;
-  
-  const todayHours = stats.today / 3600;
-  const billableHours = stats.billable / 3600;
-  
-  // Check daily achievement
-  if (todayHours >= goals.daily.workHours) {
-    achievements.push({
-      type: 'daily',
-      title: 'Daily Goal Achieved!',
-      message: `Completed ${goals.daily.workHours} hours of work today`,
-      icon: 'Sun',
-      color: 'success'
-    });
-  }
-  
-  // Check weekly achievement
-  if (billableHours >= goals.weekly.billableHours) {
-    achievements.push({
-      type: 'weekly',
-      title: 'Weekly Goal Achieved!',
-      message: `Reached ${goals.weekly.billableHours} billable hours this week`,
-      icon: 'Calendar',
-      color: 'primary'
-    });
-  }
-  
-  // Check project achievements
-  if (goals.projects) {
-    goals.projects.forEach(project => {
-      const projectProgress = calculateGoalProgress(stats.week / 3600, project.weeklyTarget);
-      if (projectProgress >= 100) {
-        achievements.push({
-          type: 'project',
-          title: 'Project Goal Achieved!',
-          message: `Completed weekly target for ${project.name}`,
-          icon: 'Target',
-          color: 'secondary'
-        });
-      }
-    });
-  }
-  
-  return achievements;
-};
-export const getGoalInsights = (timeEntries, goals) => {
-  const insights = [];
-  
-  if (!goals || !timeEntries.length) return insights;
-  
-  const today = getTodayStart();
-  const week = getWeekStart();
-  
-  const todayEntries = timeEntries.filter(entry => entry.startTime >= today);
-  const weekEntries = timeEntries.filter(entry => entry.startTime >= week);
-  
-  const todayTime = todayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 3600;
-  const weekTime = weekEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 3600;
-  
-  // Daily insights
-  if (goals.daily) {
-    const dailyProgress = (todayTime / goals.daily.workHours) * 100;
-    
-    if (dailyProgress < 50) {
-      insights.push({
-        type: 'warning',
-        category: 'daily',
-        message: `You're ${Math.round(100 - dailyProgress)}% behind your daily goal. ${Math.round((goals.daily.workHours - todayTime) * 10) / 10}h remaining.`,
-        action: 'Consider starting a focus session to catch up.'
-      });
-    } else if (dailyProgress >= 100) {
-      insights.push({
-        type: 'success',
-        category: 'daily',
-        message: 'Daily goal completed! Great work maintaining consistency.',
-        action: 'Keep up the momentum tomorrow.'
-      });
-    } else {
-      insights.push({
-        type: 'info',
-        category: 'daily',
-        message: `${Math.round(dailyProgress)}% complete. You're on track!`,
-        action: `${Math.round((goals.daily.workHours - todayTime) * 10) / 10}h more to reach your daily goal.`
-      });
-    }
-  }
-  
-  // Weekly insights
-  if (goals.weekly) {
-    const weeklyProgress = (weekTime / goals.weekly.billableHours) * 100;
-    const daysLeft = 7 - (new Date().getDay() || 7);
-    const dailyNeed = daysLeft > 0 ? (goals.weekly.billableHours - weekTime) / daysLeft : 0;
-    
-    if (weeklyProgress < 60 && daysLeft <= 2) {
-      insights.push({
-        type: 'urgent',
-        category: 'weekly',
-        message: `Behind on weekly goal with ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left.`,
-        action: `Need ${Math.round(dailyNeed * 10) / 10}h per day to catch up.`
-      });
-    }
-}
-  
-  return insights;
 };
