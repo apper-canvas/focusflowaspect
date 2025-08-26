@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import TimerControl from "@/components/organisms/TimerControl";
 import TimelineView from "@/components/organisms/TimelineView";
+import ActivityFeed from "@/components/organisms/ActivityFeed";
 import QuickStats from "@/components/molecules/QuickStats";
 import PomodoroTimer from "@/components/molecules/PomodoroTimer";
 import { timeEntryService } from "@/services/api/timeEntryService";
 import { getTodayStart, getWeekStart } from "@/utils/timeUtils";
-
 const Dashboard = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState({
@@ -54,21 +54,22 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+<div className="max-w-7xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 font-display">Dashboard</h1>
         <p className="text-gray-600">Track your time with AI-powered precision</p>
       </div>
 
-      <QuickStats stats={stats} />
-
+      {/* Main Layout Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 space-y-6">
           <TimerControl onEntryCreated={handleEntryCreated} />
+          
           <TimelineView refresh={refreshKey} />
         </div>
         
         <div className="space-y-6">
+          <ActivityFeed onEntryCreated={handleEntryCreated} />
           <PomodoroTimer />
           
           <div className="bg-gradient-to-br from-primary/5 to-secondary/5 p-6 rounded-xl border border-primary/10">

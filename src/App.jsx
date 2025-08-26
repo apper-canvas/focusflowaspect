@@ -3,11 +3,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import IdleDetectionPopup from "@/components/organisms/IdleDetectionPopup";
 import { idleDetectionService } from "@/services/idleDetectionService";
+import { activityDetectionService } from "@/services/activityDetectionService";
 import Projects from "@/components/pages/Projects";
 import Dashboard from "@/components/pages/Dashboard";
 import Settings from "@/components/pages/Settings";
 import Reports from "@/components/pages/Reports";
 import Layout from "@/components/organisms/Layout";
+
 const App = () => {
   const [idleState, setIdleState] = useState({
     isIdle: false,
@@ -15,12 +17,15 @@ const App = () => {
     customPrompt: ""
   });
 
-  useEffect(() => {
+useEffect(() => {
     // Start idle detection monitoring
     idleDetectionService.startMonitoring();
+    
+    // Start AI activity detection monitoring
+    activityDetectionService.startMonitoring();
 
     // Listen for idle detection events
-    const unsubscribe = idleDetectionService.onIdleDetected((event) => {
+    const unsubscribeIdle = idleDetectionService.onIdleDetected((event) => {
       setIdleState({
         isIdle: true,
         idleTime: event.idleTime,
@@ -30,7 +35,8 @@ const App = () => {
 
     return () => {
       idleDetectionService.stopMonitoring();
-      unsubscribe();
+      activityDetectionService.stopMonitoring();
+      unsubscribeIdle();
     };
   }, []);
 
