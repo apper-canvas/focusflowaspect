@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ReportsPanel from "@/components/organisms/ReportsPanel";
+import { formatDate, getTodayStart, getWeekStart } from "@/utils/timeUtils";
+import ApperIcon from "@/components/ApperIcon";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
-import { formatDate } from "@/utils/timeUtils";
+import Projects from "@/components/pages/Projects";
+import ReportsPanel from "@/components/organisms/ReportsPanel";
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -58,143 +59,259 @@ const Reports = () => {
           <ReportsPanel />
         </div>
         
-        <div className="space-y-6">
-{/* Goal Setting Interface */}
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 font-display">
-                Goal Setting
-              </h3>
-<Button 
-                size="sm" 
-                variant="secondary"
-                onClick={() => navigate('/goals')}
-              >
-                <ApperIcon name="Settings" size={16} className="mr-2" />
-                Customize Goals
-              </Button>
-            </div>
-            
-            <div className="space-y-6">
-              {/* Daily Goals */}
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                  <ApperIcon name="Sun" size={16} className="mr-2 text-warning" />
-                  Daily Goals
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-warning/5 to-warning/10 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium">Work Hours</span>
-                        <span className="text-gray-600">6.5/8h</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-warning to-warning/80 h-2 rounded-full transition-all duration-500" style={{ width: "81%" }}></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>81% Complete</span>
-                        <span>1.5h remaining</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-success/5 to-success/10 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium">Focus Sessions</span>
-                        <span className="text-gray-600">4/5</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-success to-success/80 h-2 rounded-full transition-all duration-500" style={{ width: "80%" }}></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>80% Complete</span>
-                        <span>1 session left</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div className="space-y-6">
+          {/* Goal Progress Display Component */}
+          <GoalProgressDisplay />
+        </div>
+      </div>
+    </div>
+  );
+};
 
-              {/* Weekly Goals */}
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                  <ApperIcon name="Calendar" size={16} className="mr-2 text-primary" />
-                  Weekly Goals
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium">Billable Hours</span>
-                        <span className="text-gray-600">32/40h</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-500" style={{ width: "80%" }}></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>80% Complete</span>
-                        <span>8h remaining</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-info/5 to-info/10 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium">Learning Time</span>
-                        <span className="text-gray-600">3.5/5h</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-info to-info/80 h-2 rounded-full transition-all duration-500" style={{ width: "70%" }}></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>70% Complete</span>
-                        <span>1.5h remaining</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+// Goal Progress Display Component for Reports Page
+const GoalProgressDisplay = () => {
+  const [goals, setGoals] = useState(null);
+  const [stats, setStats] = useState({ today: 0, week: 0, billable: 0 });
 
-              {/* Project-Specific Goals */}
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                  <ApperIcon name="Target" size={16} className="mr-2 text-secondary" />
-                  Project Goals
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-secondary/5 to-secondary/10 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="font-medium">FocusFlow Development</span>
-                        <span className="text-gray-600">18/25h</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-secondary to-secondary/80 h-2 rounded-full transition-all duration-500" style={{ width: "72%" }}></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>72% Complete</span>
-                        <span>7h remaining this week</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+  useEffect(() => {
+    const savedGoals = localStorage.getItem("focusflow-goals");
+    if (savedGoals) {
+      setGoals(JSON.parse(savedGoals));
+    }
+    loadCurrentStats();
+  }, []);
+
+  const loadCurrentStats = async () => {
+    try {
+      const { timeEntryService } = await import("@/services/api/timeEntryService");
+      const { getTodayStart, getWeekStart } = await import("@/utils/timeUtils");
+      
+      const allEntries = await timeEntryService.getAll();
+      const todayStart = getTodayStart();
+      const weekStart = getWeekStart();
+
+      const todayEntries = allEntries.filter(entry => entry.startTime >= todayStart);
+      const weekEntries = allEntries.filter(entry => entry.startTime >= weekStart);
+      
+      const todayTime = todayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+      const weekTime = weekEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+      const billableTime = weekEntries
+        .filter(entry => entry.billable)
+        .reduce((sum, entry) => sum + (entry.duration || 0), 0);
+
+      setStats({ today: todayTime, week: weekTime, billable: billableTime });
+    } catch (error) {
+      console.error("Failed to load current stats:", error);
+    }
+  };
+
+  if (!goals) {
+    return (
+      <Card className="p-6">
+        <div className="text-center py-8">
+          <ApperIcon name="Target" size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Goals Set</h3>
+          <p className="text-gray-600 mb-4">Set up your productivity goals to track progress</p>
+          <Button onClick={() => navigate('/goals')}>
+            <ApperIcon name="Plus" size={16} className="mr-2" />
+            Create Goals
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  const todayHours = Math.round(stats.today / 3600 * 10) / 10;
+  const weekHours = Math.round(stats.week / 3600 * 10) / 10;
+  const billableWeekHours = Math.round(stats.billable / 3600 * 10) / 10;
+
+  const dailyProgress = Math.min((todayHours / goals.daily.workHours) * 100, 100);
+  const weeklyProgress = Math.min((billableWeekHours / goals.weekly.billableHours) * 100, 100);
+  const focusSessionsProgress = Math.min((Math.ceil(todayHours / 2) / goals.daily.focusSessions) * 100, 100);
+
+  const getProgressColor = (progress) => {
+    if (progress >= 100) return 'success';
+    if (progress >= 80) return 'primary';
+    if (progress >= 60) return 'info';
+    if (progress >= 40) return 'warning';
+    return 'error';
+  };
+
+  return (
+    <Card className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 font-display">
+          Goal Progress Tracking
+        </h3>
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={() => navigate('/goals')}
+        >
+          <ApperIcon name="Settings" size={16} className="mr-2" />
+          Manage Goals
+        </Button>
+      </div>
+      
+      <div className="space-y-6">
+        {/* Daily Goals Section */}
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+            <ApperIcon name="Sun" size={16} className="mr-2 text-warning" />
+            Daily Goals Progress
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={`p-4 bg-gradient-to-r from-${getProgressColor(dailyProgress)}/5 to-${getProgressColor(dailyProgress)}/10 rounded-lg border border-${getProgressColor(dailyProgress)}/20`}>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="font-medium">Work Hours</span>
+                <span className="text-gray-600">{todayHours}h / {goals.daily.workHours}h</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                <div 
+                  className={`bg-gradient-to-r from-${getProgressColor(dailyProgress)} to-${getProgressColor(dailyProgress)}/80 h-3 rounded-full transition-all duration-700`}
+                  style={{ width: `${Math.min(dailyProgress, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{Math.round(dailyProgress)}% Complete</span>
+                <span>{Math.max(goals.daily.workHours - todayHours, 0).toFixed(1)}h remaining</span>
               </div>
             </div>
             
-<Button 
-              className="w-full mt-6" 
-              size="sm"
-              onClick={() => navigate('/goals')}
-            >
-              <ApperIcon name="Plus" size={16} className="mr-2" />
-              Add New Goal
-            </Button>
-          </Card>
+            <div className={`p-4 bg-gradient-to-r from-${getProgressColor(focusSessionsProgress)}/5 to-${getProgressColor(focusSessionsProgress)}/10 rounded-lg border border-${getProgressColor(focusSessionsProgress)}/20`}>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="font-medium">Focus Sessions</span>
+                <span className="text-gray-600">{Math.ceil(todayHours / 2)} / {goals.daily.focusSessions}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                <div 
+                  className={`bg-gradient-to-r from-${getProgressColor(focusSessionsProgress)} to-${getProgressColor(focusSessionsProgress)}/80 h-3 rounded-full transition-all duration-700`}
+                  style={{ width: `${Math.min(focusSessionsProgress, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{Math.round(focusSessionsProgress)}% Complete</span>
+                <span>{Math.max(goals.daily.focusSessions - Math.ceil(todayHours / 2), 0)} sessions left</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          {/* Achievement Dashboard */}
+        {/* Weekly Goals Section */}
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+            <ApperIcon name="Calendar" size={16} className="mr-2 text-primary" />
+            Weekly Goals Progress
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={`p-4 bg-gradient-to-r from-${getProgressColor(weeklyProgress)}/5 to-${getProgressColor(weeklyProgress)}/10 rounded-lg border border-${getProgressColor(weeklyProgress)}/20`}>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="font-medium">Billable Hours</span>
+                <span className="text-gray-600">{billableWeekHours}h / {goals.weekly.billableHours}h</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                <div 
+                  className={`bg-gradient-to-r from-${getProgressColor(weeklyProgress)} to-${getProgressColor(weeklyProgress)}/80 h-3 rounded-full transition-all duration-700`}
+                  style={{ width: `${Math.min(weeklyProgress, 100)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>{Math.round(weeklyProgress)}% Complete</span>
+                <span>{Math.max(goals.weekly.billableHours - billableWeekHours, 0).toFixed(1)}h remaining</span>
+              </div>
+            </div>
+
+            {goals.weekly.learningHours && (
+              <div className="p-4 bg-gradient-to-r from-info/5 to-info/10 rounded-lg border border-info/20">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="font-medium">Learning Time</span>
+                  <span className="text-gray-600">0h / {goals.weekly.learningHours}h</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                  <div 
+                    className="bg-gradient-to-r from-info to-info/80 h-3 rounded-full transition-all duration-700"
+                    style={{ width: "0%" }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>0% Complete</span>
+                  <span>{goals.weekly.learningHours}h remaining</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Project Goals Section */}
+        {goals.projects && goals.projects.length > 0 && (
+          <div>
+            <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+              <ApperIcon name="Target" size={16} className="mr-2 text-secondary" />
+              Project Goals Progress
+            </h4>
+            <div className="space-y-3">
+              {goals.projects.map((project, index) => {
+                const projectProgress = Math.min((weekHours / project.weeklyTarget) * 100, 100);
+                const priorityColor = project.priority === 'high' ? 'error' : project.priority === 'medium' ? 'warning' : 'success';
+                
+                return (
+                  <div key={project.id || index} className={`p-4 bg-gradient-to-r from-${priorityColor}/5 to-${priorityColor}/10 rounded-lg border border-${priorityColor}/20`}>
+                    <div className="flex justify-between text-sm mb-2">
+                      <div className="flex items-center space-x-2">
+                        <div className={`w-2 h-2 rounded-full bg-${priorityColor}`} />
+                        <span className="font-medium">{project.name}</span>
+                        <span className="text-xs text-gray-500 capitalize">({project.priority} priority)</span>
+                      </div>
+                      <span className="text-gray-600">{weekHours.toFixed(1)}h / {project.weeklyTarget}h</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                      <div 
+                        className={`bg-gradient-to-r from-${priorityColor} to-${priorityColor}/80 h-3 rounded-full transition-all duration-700`}
+                        style={{ width: `${Math.min(projectProgress, 100)}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{Math.round(projectProgress)}% Complete</span>
+                      <span>{Math.max(project.weeklyTarget - weekHours, 0).toFixed(1)}h remaining this week</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Goal Achievement Summary */}
+        <div className="p-4 bg-gradient-to-r from-success/10 to-primary/10 rounded-lg border border-success/20">
+          <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+            <ApperIcon name="TrendingUp" size={16} className="mr-2 text-success" />
+            Weekly Achievement Summary
+          </h5>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className={`text-2xl font-bold ${dailyProgress >= 80 ? 'text-success' : 'text-warning'}`}>
+                {Math.round(dailyProgress)}%
+              </div>
+              <div className="text-xs text-gray-600">Daily Goal</div>
+            </div>
+            <div>
+              <div className={`text-2xl font-bold ${weeklyProgress >= 80 ? 'text-success' : 'text-warning'}`}>
+                {Math.round(weeklyProgress)}%
+              </div>
+              <div className="text-xs text-gray-600">Weekly Goal</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-info">
+                {goals.projects ? goals.projects.length : 0}
+              </div>
+              <div className="text-xs text-gray-600">Active Projects</div>
+            </div>
+</div>
+        </div>
+      </div>
+    </Card>
+
+    {/* Achievement Dashboard */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold text-gray-900 font-display mb-4">
               Achievements & Insights
