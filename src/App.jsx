@@ -51,7 +51,7 @@ useEffect(() => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-white font-body">
+<div className="min-h-screen font-body">
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />

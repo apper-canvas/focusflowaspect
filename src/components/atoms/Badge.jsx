@@ -7,11 +7,11 @@ const Badge = React.forwardRef(({
   children, 
   ...props 
 }, ref) => {
-  const variants = {
-    default: "bg-surface text-primary border-primary/20",
-    billable: "bg-success/10 text-success border-success/20",
+const variants = {
+    default: "bg-gray-100 text-gray-700 border-gray-300",
+    billable: "bg-green-100 text-green-700 border-green-300",
     nonBillable: "bg-gray-100 text-gray-600 border-gray-200",
-    project: "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border-primary/30"
+    project: "bg-purple-100 text-purple-700 border-purple-300"
   };
 
   return (
