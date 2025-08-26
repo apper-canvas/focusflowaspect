@@ -11,7 +11,6 @@ const Reports = () => {
   const navigate = useNavigate();
   const [dateRange, setDateRange] = useState("week");
   const [exportFormat, setExportFormat] = useState("csv");
-
   const dateRangeOptions = [
     { value: "today", label: "Today" },
     { value: "week", label: "This Week" },
@@ -51,9 +50,9 @@ const Reports = () => {
         <div className="lg:col-span-2">
             <ReportsPanel />
         </div>
-        <div className="space-y-6">
+<div className="space-y-6">
             {/* Goal Progress Display Component */}
-            <GoalProgressDisplay />
+            <GoalProgressDisplay navigate={navigate} />
         </div>
     </div>
 </div>
@@ -61,10 +60,9 @@ const Reports = () => {
 };
 
 // Goal Progress Display Component for Reports Page
-const GoalProgressDisplay = () => {
+const GoalProgressDisplay = ({ navigate }) => {
   const [goals, setGoals] = useState(null);
   const [stats, setStats] = useState({ today: 0, week: 0, billable: 0 });
-
   useEffect(() => {
     const savedGoals = localStorage.getItem("focusflow-goals");
     if (savedGoals) {
