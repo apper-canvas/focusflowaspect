@@ -265,8 +265,7 @@ export const calculateRemainingTime = (current, target) => {
     total: remaining
   };
 };
-
-export const getProductivityTrend = (currentWeek, previousWeek) => {
+export const getProductivityTrendComparison = (currentWeek, previousWeek) => {
   if (!previousWeek || previousWeek === 0) return { trend: 'new', change: 0 };
   
   const change = ((currentWeek - previousWeek) / previousWeek) * 100;
