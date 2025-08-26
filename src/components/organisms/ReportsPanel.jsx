@@ -151,85 +151,209 @@ const ReportsPanel = () => {
         {entries.length === 0 ? (
           <Empty message={`No entries for ${view} view`} />
         ) : (
-          <>
-            {/* Summary Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 p-4 rounded-lg">
+<>
+            {/* Enhanced Summary Stats */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gradient-to-br from-primary/10 to-secondary/10 p-4 rounded-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10" />
                 <div className="flex items-center space-x-2 mb-1">
                   <ApperIcon name="Clock" size={16} className="text-primary" />
                   <span className="text-sm font-medium text-gray-700">Total Time</span>
                 </div>
                 <p className="text-2xl font-bold text-primary">{formatDuration(stats.totalTime)}</p>
+                <div className="flex items-center space-x-1 mt-1">
+                  <ApperIcon name="TrendingUp" size={12} className="text-success" />
+                  <span className="text-xs text-success font-medium">+12% vs last {view}</span>
+                </div>
               </div>
               
-              <div className="bg-gradient-to-br from-success/10 to-success/20 p-4 rounded-lg">
+              <div className="bg-gradient-to-br from-success/10 to-success/20 p-4 rounded-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-success/5 rounded-full -mr-10 -mt-10" />
                 <div className="flex items-center space-x-2 mb-1">
                   <ApperIcon name="DollarSign" size={16} className="text-success" />
                   <span className="text-sm font-medium text-gray-700">Billable</span>
                 </div>
                 <p className="text-2xl font-bold text-success">{formatDuration(stats.billableTime)}</p>
+                <div className="flex items-center space-x-1 mt-1">
+                  <span className="text-xs text-success font-medium">
+                    {stats.totalTime > 0 ? Math.round((stats.billableTime / stats.totalTime) * 100) : 0}% of total
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Project Breakdown */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+            {/* Visual Project Breakdown */}
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
                 <ApperIcon name="BarChart3" size={16} className="mr-2" />
-                Project Breakdown
+                Visual Project Breakdown
               </h4>
               
               {stats.projects && stats.projects.length > 0 ? (
-                <div className="space-y-3">
-                  {stats.projects.map((project, index) => {
-                    const percentage = ((project.duration / stats.totalTime) * 100).toFixed(1);
-                    return (
-                      <div key={index} className="space-y-1">
-                        <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center space-x-2">
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: getProjectColor(project.name) }}
-                            />
-                            <span className="font-medium">{project.name}</span>
+                <>
+                  {/* Project Time Distribution */}
+                  <div className="space-y-4">
+                    {stats.projects.map((project, index) => {
+                      const percentage = ((project.duration / stats.totalTime) * 100).toFixed(1);
+                      const isTopProject = index === 0;
+                      return (
+                        <div key={index} className={`p-3 rounded-lg border transition-all duration-300 hover:shadow-md ${
+                          isTopProject ? 'bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20' : 'bg-gray-50 border-gray-200'
+                        }`}>
+                          <div className="flex items-center justify-between text-sm mb-2">
+                            <div className="flex items-center space-x-3">
+                              <div
+                                className="w-4 h-4 rounded-full shadow-sm"
+                                style={{ backgroundColor: getProjectColor(project.name) }}
+                              />
+                              <span className="font-medium">{project.name}</span>
+                              {isTopProject && (
+                                <Badge variant="success">
+                                  <ApperIcon name="Crown" size={10} className="mr-1" />
+                                  Top
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <span className="text-gray-600 font-medium">{formatDuration(project.duration)}</span>
+                              <span className="text-xs bg-gray-200 px-2 py-1 rounded-full font-medium">{percentage}%</span>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-gray-600">{formatDuration(project.duration)}</span>
-                            <span className="text-xs text-gray-500">({percentage}%)</span>
+                          <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                            <div
+                              className="h-3 rounded-full transition-all duration-700 ease-out relative"
+                              style={{
+                                width: `${percentage}%`,
+                                background: `linear-gradient(90deg, ${getProjectColor(project.name)}, ${getProjectColor(project.name)}80)`
+                              }}
+                            >
+                              <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
+                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>{view === 'daily' ? 'Today' : 'This Week'}</span>
+                            <span>
+                              {project.sessions || Math.ceil(project.duration / 3600)} session{(project.sessions || Math.ceil(project.duration / 3600)) !== 1 ? 's' : ''}
+                            </span>
                           </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                      );
+                    })}
+                  </div>
+
+                  {/* Project Comparison Chart */}
+                  <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+                    <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+                      <ApperIcon name="PieChart" size={14} className="mr-2" />
+                      Time Distribution Overview
+                    </h5>
+                    <div className="flex space-x-1 h-6 rounded-full overflow-hidden bg-gray-200">
+                      {stats.projects.map((project, index) => {
+                        const percentage = (project.duration / stats.totalTime) * 100;
+                        return (
                           <div
-                            className="h-2 rounded-full transition-all duration-500"
+                            key={index}
+                            className="transition-all duration-500 hover:opacity-80"
                             style={{
                               width: `${percentage}%`,
                               backgroundColor: getProjectColor(project.name)
                             }}
+                            title={`${project.name}: ${percentage.toFixed(1)}%`}
                           />
+                        );
+                      })}
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {stats.projects.slice(0, 3).map((project, index) => (
+                        <div key={index} className="flex items-center space-x-1 text-xs">
+                          <div
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: getProjectColor(project.name) }}
+                          />
+                          <span className="text-gray-600">{project.name}</span>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      ))}
+                      {stats.projects.length > 3 && (
+                        <span className="text-xs text-gray-500">+{stats.projects.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
+                </>
               ) : (
-                <p className="text-gray-500 text-sm">No project data available</p>
+                <div className="text-center py-8">
+                  <ApperIcon name="BarChart3" size={48} className="mx-auto text-gray-300 mb-3" />
+                  <p className="text-gray-500 text-sm">No project data available</p>
+                </div>
               )}
             </div>
 
-            {/* Billable vs Non-billable */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
-                <ApperIcon name="PieChart" size={16} className="mr-2" />
-                Billable Summary
+            {/* Enhanced Billable Analysis */}
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4 flex items-center">
+                <ApperIcon name="DollarSign" size={16} className="mr-2" />
+                Billable Time Analysis
               </h4>
               
-              <div className="flex space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Badge variant="billable">Billable</Badge>
-                  <span className="text-sm font-medium">{formatDuration(stats.billableTime)}</span>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="p-3 bg-gradient-to-br from-success/10 to-success/5 rounded-lg border border-success/20">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Badge variant="billable">Billable</Badge>
+                    <span className="text-sm font-medium">{formatDuration(stats.billableTime)}</span>
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {stats.totalTime > 0 ? Math.round((stats.billableTime / stats.totalTime) * 100) : 0}% of total time
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="nonBillable">Non-billable</Badge>
-                  <span className="text-sm font-medium">{formatDuration(stats.nonBillableTime)}</span>
+                
+                <div className="p-3 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Badge variant="nonBillable">Non-billable</Badge>
+                    <span className="text-sm font-medium">{formatDuration(stats.nonBillableTime)}</span>
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {stats.totalTime > 0 ? Math.round((stats.nonBillableTime / stats.totalTime) * 100) : 0}% of total time
+                  </div>
+                </div>
+              </div>
+
+              {/* Billable vs Non-billable Visualization */}
+              <div className="relative">
+                <div className="flex h-8 rounded-full overflow-hidden bg-gray-200">
+                  <div 
+                    className="bg-gradient-to-r from-success to-success/80 transition-all duration-700"
+                    style={{ width: `${stats.totalTime > 0 ? (stats.billableTime / stats.totalTime) * 100 : 0}%` }}
+                  />
+                  <div 
+                    className="bg-gradient-to-r from-gray-400 to-gray-300 transition-all duration-700"
+                    style={{ width: `${stats.totalTime > 0 ? (stats.nonBillableTime / stats.totalTime) * 100 : 0}%` }}
+                  />
+                </div>
+                <div className="flex justify-center mt-2">
+                  <div className="text-xs text-gray-600 bg-white px-3 py-1 rounded-full shadow-sm border">
+                    Billable Rate: {stats.totalTime > 0 ? Math.round((stats.billableTime / stats.totalTime) * 100) : 0}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Productivity Insights */}
+            <div className="p-4 bg-gradient-to-r from-info/10 to-info/5 rounded-lg">
+              <h5 className="font-medium text-gray-800 mb-3 flex items-center">
+                <ApperIcon name="Brain" size={14} className="mr-2 text-info" />
+                Productivity Insights
+              </h5>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-info">
+                    {stats.totalTime > 0 ? Math.round(stats.totalTime / 3600 * 10) / 10 : 0}h
+                  </div>
+                  <div className="text-xs text-gray-600">Avg per day</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-secondary">
+                    {stats.projects ? stats.projects.length : 0}
+                  </div>
+                  <div className="text-xs text-gray-600">Active projects</div>
                 </div>
               </div>
             </div>

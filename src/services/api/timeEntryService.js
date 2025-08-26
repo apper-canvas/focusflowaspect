@@ -72,5 +72,32 @@ export const timeEntryService = {
     await delay(100);
     const activeEntry = timeEntries.find(entry => !entry.endTime);
     return activeEntry ? { ...activeEntry } : null;
+},
+
+  // Goal management methods
+  async getGoals() {
+    await delay(150);
+    const goals = JSON.parse(localStorage.getItem('userGoals') || '{}');
+    return {
+      daily: {
+        workHours: goals.dailyWorkHours || 8,
+        focusSessions: goals.dailyFocusSessions || 5,
+        ...goals.daily
+      },
+      weekly: {
+        billableHours: goals.weeklyBillableHours || 40,
+        learningTime: goals.weeklyLearningTime || 5,
+        ...goals.weekly
+      },
+      projects: goals.projects || {}
+    };
+  },
+
+  async updateGoals(goalData) {
+    await delay(200);
+    const currentGoals = JSON.parse(localStorage.getItem('userGoals') || '{}');
+    const updatedGoals = { ...currentGoals, ...goalData };
+    localStorage.setItem('userGoals', JSON.stringify(updatedGoals));
+    return updatedGoals;
   }
 };
