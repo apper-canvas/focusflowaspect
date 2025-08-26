@@ -20,9 +20,11 @@ export default {
         'display': ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
         'body': ['Inter', 'system-ui', 'sans-serif'],
       },
-      animation: {
+animation: {
         'timer-pulse': 'timer-pulse 2s infinite',
         'count-up': 'count-up 0.3s ease-out',
+        'popup-in': 'popup-in 0.3s ease-out',
+        'fade-in': 'fade-in 0.3s ease-out',
       },
       keyframes: {
         'timer-pulse': {
@@ -32,6 +34,20 @@ export default {
         'count-up': {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'popup-in': {
+          '0%': { 
+            opacity: '0',
+            transform: 'scale(0.9) translateY(-10px)',
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'scale(1) translateY(0)',
+          },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
     },

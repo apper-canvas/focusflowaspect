@@ -80,3 +80,63 @@ input:focus, textarea:focus, select:focus {
   outline: 2px solid #5B4FB6;
   outline-offset: 2px;
 }
+
+/* Modal popup animations */
+@keyframes popup-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-popup-in {
+  animation: popup-in 0.3s ease-out;
+}
+
+.popup-backdrop {
+  animation: fade-in 0.3s ease-out;
+}
+
+.popup-backdrop-blur {
+  animation: backdrop-blur-in 0.3s ease-out;
+}
+
+.popup-modal {
+  animation: modal-slide-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes backdrop-blur-in {
+  0% { 
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% { 
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes modal-slide-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Ensure modal appears above everything */
+.popup-backdrop {
+  z-index: 100;
+}

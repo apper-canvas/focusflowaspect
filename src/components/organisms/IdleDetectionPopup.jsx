@@ -23,6 +23,25 @@ const IdleDetectionPopup = ({
     { id: "other", label: "Other", icon: "MoreHorizontal", color: "bg-gray-500 text-white" }
   ];
 
+  // Handle escape key press
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && isVisible && !isSubmitting) {
+        handleDismiss();
+      }
+    };
+
+    if (isVisible) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isVisible, isSubmitting]);
+
   const formatIdleTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -51,70 +70,98 @@ const IdleDetectionPopup = ({
     toast.info("Idle detection dismissed - continuing current session");
   };
 
+  const handleBackdropClick = (event) => {
+    if (event.target === event.currentTarget && !isSubmitting) {
+      handleDismiss();
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="max-w-md w-full p-6 animate-in fade-in duration-300">
-        <div className="text-center space-y-4">
-          {/* Header */}
-          <div className="w-16 h-16 bg-gradient-to-br from-warning/20 to-warning/30 rounded-full flex items-center justify-center mx-auto">
-            <ApperIcon name="Clock" size={32} className="text-warning" />
-          </div>
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 popup-backdrop"
+      onClick={handleBackdropClick}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm popup-backdrop-blur" />
+      
+      <Card className={cn(
+        "relative max-w-md w-full p-8 shadow-2xl border-0",
+        "transform transition-all duration-300 ease-out",
+        "popup-modal animate-popup-in"
+      )}>
+        {/* Close button */}
+        <button
+          onClick={handleDismiss}
+          disabled={isSubmitting}
+          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50"
+          aria-label="Close popup"
+        >
+          <ApperIcon name="X" size={18} className="text-gray-400" />
+        </button>
 
-          {/* Custom Prompt */}
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-gray-900 font-display">
-              {customPrompt || "Away from keyboard?"}
-            </h3>
-            <p className="text-sm text-gray-600">
-              You've been idle for <span className="font-medium text-warning">{formatIdleTime(idleTime)}</span>
-            </p>
-            <p className="text-xs text-gray-500">
-              What were you doing during this time?
-            </p>
+        <div className="text-center space-y-6">
+          {/* Header */}
+          <div className="space-y-3">
+            <div className="w-20 h-20 bg-gradient-to-br from-warning/20 to-warning/30 rounded-full flex items-center justify-center mx-auto">
+              <ApperIcon name="Clock" size={36} className="text-warning" />
+            </div>
+            
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold text-gray-900 font-display">
+                {customPrompt || "Away from keyboard?"}
+              </h2>
+              <p className="text-base text-gray-600">
+                You've been idle for <span className="font-semibold text-warning">{formatIdleTime(idleTime)}</span>
+              </p>
+              <p className="text-sm text-gray-500">
+                What were you doing during this time?
+              </p>
+            </div>
           </div>
 
           {/* Category Buttons */}
-          <div className="grid grid-cols-2 gap-3 pt-2">
+          <div className="grid grid-cols-2 gap-4">
             {categories.map((category) => (
               <Button
                 key={category.id}
                 variant="outline"
-                size="md"
+                size="lg"
                 onClick={() => handleCategorize(category)}
                 disabled={isSubmitting}
                 className={cn(
-                  "flex flex-col items-center space-y-2 p-4 h-auto",
-                  "hover:scale-105 transition-all duration-200"
+                  "flex flex-col items-center space-y-3 p-6 h-auto border-2",
+                  "hover:scale-105 hover:shadow-md transition-all duration-200",
+                  "focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 )}
               >
-                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", category.color)}>
-                  <ApperIcon name={category.icon} size={16} />
+                <div className={cn("w-10 h-10 rounded-full flex items-center justify-center", category.color)}>
+                  <ApperIcon name={category.icon} size={20} />
                 </div>
-                <span className="text-sm font-medium">{category.label}</span>
+                <span className="text-sm font-medium text-gray-900">{category.label}</span>
               </Button>
             ))}
           </div>
 
           {/* Actions */}
-          <div className="flex space-x-3 pt-4 border-t">
+          <div className="pt-6 border-t border-gray-200">
             <Button
               variant="ghost"
+              size="lg"
               onClick={handleDismiss}
               disabled={isSubmitting}
-              className="flex-1"
+              className="w-full justify-center"
             >
-              <ApperIcon name="X" size={16} className="mr-2" />
+              <ApperIcon name="ArrowRight" size={16} className="mr-2" />
               Continue Working
             </Button>
           </div>
 
           {/* Loading State */}
           {isSubmitting && (
-            <div className="flex items-center justify-center pt-2">
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin mr-2"></div>
-              <span className="text-sm text-gray-600">Categorizing...</span>
+            <div className="flex items-center justify-center pt-4">
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin mr-3"></div>
+              <span className="text-sm text-gray-600 font-medium">Categorizing...</span>
             </div>
           )}
         </div>
