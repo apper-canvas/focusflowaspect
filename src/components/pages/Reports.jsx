@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReportsPanel from "@/components/organisms/ReportsPanel";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
@@ -6,6 +7,7 @@ import ApperIcon from "@/components/ApperIcon";
 import { formatDate } from "@/utils/timeUtils";
 
 const Reports = () => {
+  const navigate = useNavigate();
   const [dateRange, setDateRange] = useState("week");
   const [exportFormat, setExportFormat] = useState("csv");
 
@@ -63,7 +65,11 @@ const Reports = () => {
               <h3 className="text-lg font-semibold text-gray-900 font-display">
                 Goal Setting
               </h3>
-              <Button size="sm" variant="secondary">
+<Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => navigate('/goals')}
+              >
                 <ApperIcon name="Settings" size={16} className="mr-2" />
                 Customize Goals
               </Button>

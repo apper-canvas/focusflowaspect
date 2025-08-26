@@ -8,6 +8,7 @@ import Projects from "@/components/pages/Projects";
 import Dashboard from "@/components/pages/Dashboard";
 import Settings from "@/components/pages/Settings";
 import Reports from "@/components/pages/Reports";
+import GoalsCustomization from "@/components/pages/GoalsCustomization";
 import Layout from "@/components/organisms/Layout";
 
 const App = () => {
@@ -53,11 +54,12 @@ useEffect(() => {
     <BrowserRouter>
 <div className="min-h-screen font-body">
         <Routes>
-          <Route path="/" element={<Layout />}>
+<Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="reports" element={<Reports />} />
             <Route path="projects" element={<Projects />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="goals" element={<GoalsCustomization />} />
           </Route>
         </Routes>
         <ToastContainer
