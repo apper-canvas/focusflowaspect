@@ -184,7 +184,11 @@ const Reports = () => {
               </div>
             </div>
             
-            <Button className="w-full mt-6" size="sm">
+<Button 
+              className="w-full mt-6" 
+              size="sm"
+              onClick={() => navigate('/goals')}
+            >
               <ApperIcon name="Plus" size={16} className="mr-2" />
               Add New Goal
             </Button>
