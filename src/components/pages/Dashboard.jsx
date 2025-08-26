@@ -27,7 +27,7 @@ const Dashboard = () => {
       const todayStart = getTodayStart();
       const weekStart = getWeekStart();
 
-      const todayEntries = allEntries.filter(entry => entry.startTime >= todayStart);
+const todayEntries = allEntries.filter(entry => entry.startTime >= todayStart);
       const weekEntries = allEntries.filter(entry => entry.startTime >= weekStart);
       
       const todayTime = todayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);

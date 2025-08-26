@@ -28,7 +28,7 @@ const TimelineView = ({ refresh }) => {
       const allEntries = await timeEntryService.getAll();
       const todayStart = getTodayStart();
       const todayEntries = allEntries
-        .filter(entry => entry.startTime >= todayStart)
+.filter(entry => entry.startTime >= todayStart)
         .sort((a, b) => b.startTime - a.startTime);
       
       setEntries(todayEntries);
@@ -45,7 +45,7 @@ const TimelineView = ({ refresh }) => {
     
     try {
       await timeEntryService.delete(id);
-      setEntries(entries.filter(entry => entry.Id !== id));
+setEntries(entries.filter(entry => entry.Id !== id));
       toast.success("Entry deleted successfully");
     } catch (error) {
       toast.error("Failed to delete entry");
@@ -54,14 +54,14 @@ const TimelineView = ({ refresh }) => {
   };
 
   const handleEditStart = (entry) => {
-    setEditingId(entry.Id);
+setEditingId(entry.Id);
     setEditDescription(entry.description || "");
   };
 
   const handleEditSave = async (id) => {
     try {
       await timeEntryService.update(id, { description: editDescription });
-      setEntries(entries.map(entry => 
+setEntries(entries.map(entry => 
         entry.Id === id ? { ...entry, description: editDescription } : entry
       ));
       setEditingId(null);
@@ -115,7 +115,7 @@ const TimelineView = ({ refresh }) => {
                 <div className="flex items-center space-x-2 mb-2">
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: getProjectColor(entry.project) }}
+style={{ backgroundColor: getProjectColor(entry.project) }}
                   />
                   <span className="font-medium text-gray-900 truncate">
                     {entry.project}
@@ -131,7 +131,7 @@ const TimelineView = ({ refresh }) => {
                   )}
                 </div>
 
-                {editingId === entry.Id ? (
+{editingId === entry.Id ? (
                   <div className="space-y-2">
                     <input
                       value={editDescription}
@@ -152,10 +152,10 @@ const TimelineView = ({ refresh }) => {
                 ) : (
                   <>
                     <p className="text-gray-700 text-sm mb-2">
-                      {entry.description || "No description"}
+{entry.description || "No description"}
                     </p>
                     
-                    <div className="flex items-center space-x-4 text-xs text-gray-500">
+<div className="flex items-center space-x-4 text-xs text-gray-500">
                       <span>{formatTime(entry.startTime)}</span>
                       {entry.endTime && (
                         <>
@@ -184,7 +184,7 @@ const TimelineView = ({ refresh }) => {
                 )}
               </div>
 
-              {editingId !== entry.Id && (
+{editingId !== entry.Id && (
                 <div className="flex opacity-0 group-hover:opacity-100 transition-opacity space-x-1 ml-4">
                   <Button
                     size="sm"
@@ -206,7 +206,7 @@ const TimelineView = ({ refresh }) => {
               )}
             </div>
 
-            {!entry.endTime && (
+{!entry.endTime && (
               <div className="absolute top-2 right-2">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
               </div>

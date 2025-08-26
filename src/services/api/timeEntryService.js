@@ -1,79 +1,463 @@
-import timeEntriesData from "@/services/mockData/timeEntries.json";
-
-let timeEntries = [...timeEntriesData];
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const timeEntryService = {
   async getAll() {
     await delay(200);
-    return timeEntries.map(entry => ({ ...entry }));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "start_time_c" } },
+          { field: { Name: "end_time_c" } },
+          { field: { Name: "duration_c" } },
+          { field: { Name: "project_c" } },
+          { field: { Name: "billable_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "auto_detected_c" } },
+          { field: { Name: "category_c" } },
+          { field: { Name: "Tags" } }
+        ],
+        pagingInfo: {
+          limit: 1000,
+          offset: 0
+        }
+      };
+
+      const response = await apperClient.fetchRecords('time_entry_c', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      return response.data.map(entry => ({
+        Id: entry.Id,
+        startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+        endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+        duration: entry.duration_c || 0,
+        project: entry.project_c?.Name || "Unknown Project",
+        projectId: entry.project_c?.Id || null,
+        tags: entry.Tags ? entry.Tags.split(',') : [],
+        billable: entry.billable_c || false,
+        description: entry.description_c || "",
+        autoDetected: entry.auto_detected_c || false,
+        category: entry.category_c || null
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching time entries:", error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return [];
+    }
   },
 
   async getById(id) {
     await delay(150);
-    const entry = timeEntries.find(entry => entry.Id === parseInt(id));
-    return entry ? { ...entry } : null;
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "start_time_c" } },
+          { field: { Name: "end_time_c" } },
+          { field: { Name: "duration_c" } },
+          { field: { Name: "project_c" } },
+          { field: { Name: "billable_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "auto_detected_c" } },
+          { field: { Name: "category_c" } },
+          { field: { Name: "Tags" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById('time_entry_c', id, params);
+
+      if (!response || !response.data) {
+        return null;
+      }
+
+      const entry = response.data;
+      return {
+        Id: entry.Id,
+        startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+        endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+        duration: entry.duration_c || 0,
+        project: entry.project_c?.Name || "Unknown Project",
+        projectId: entry.project_c?.Id || null,
+        tags: entry.Tags ? entry.Tags.split(',') : [],
+        billable: entry.billable_c || false,
+        description: entry.description_c || "",
+        autoDetected: entry.auto_detected_c || false,
+        category: entry.category_c || null
+      };
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching time entry with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return null;
+    }
   },
 
-async create(entryData) {
+  async create(entryData) {
     await delay(300);
-    const newId = Math.max(...timeEntries.map(entry => entry.Id), 0) + 1;
-    const newEntry = {
-      Id: newId,
-      ...entryData,
-      startTime: entryData.startTime || Date.now(),
-      endTime: entryData.endTime || null,
-      duration: entryData.duration || 0,
-      autoDetected: entryData.autoDetected || false,
-      category: entryData.category || null,
-      tags: entryData.tags || []
-    };
-    
-    timeEntries.push(newEntry);
-    return { ...newEntry };
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        records: [{
+          Name: entryData.description || "Time Entry",
+          start_time_c: entryData.startTime ? new Date(entryData.startTime).toISOString() : new Date().toISOString(),
+          end_time_c: entryData.endTime ? new Date(entryData.endTime).toISOString() : null,
+          duration_c: entryData.duration || 0,
+          project_c: entryData.projectId || null,
+          billable_c: entryData.billable || false,
+          description_c: entryData.description || "",
+          auto_detected_c: entryData.autoDetected || false,
+          category_c: entryData.category || null,
+          Tags: Array.isArray(entryData.tags) ? entryData.tags.join(',') : ""
+        }]
+      };
+
+      const response = await apperClient.createRecord('time_entry_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create time entries ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              throw new Error(`${error.fieldLabel}: ${error}`);
+            });
+            if (record.message) throw new Error(record.message);
+          });
+        }
+
+        if (successfulRecords.length > 0) {
+          const entry = successfulRecords[0].data;
+          return {
+            Id: entry.Id,
+            startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+            endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+            duration: entry.duration_c || 0,
+            project: entry.project_c?.Name || "Unknown Project",
+            projectId: entry.project_c?.Id || null,
+            tags: entry.Tags ? entry.Tags.split(',') : [],
+            billable: entry.billable_c || false,
+            description: entry.description_c || "",
+            autoDetected: entry.auto_detected_c || false,
+            category: entry.category_c || null
+          };
+        }
+      }
+      
+      throw new Error("Failed to create time entry");
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating time entry:", error?.response?.data?.message);
+        throw new Error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+        throw error;
+      }
+    }
   },
 
   async update(id, updateData) {
     await delay(250);
-    const index = timeEntries.findIndex(entry => entry.Id === parseInt(id));
-    
-    if (index === -1) {
-      throw new Error("Time entry not found");
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: updateData.description || "Time Entry",
+          start_time_c: updateData.startTime ? new Date(updateData.startTime).toISOString() : undefined,
+          end_time_c: updateData.endTime ? new Date(updateData.endTime).toISOString() : null,
+          duration_c: updateData.duration,
+          project_c: updateData.projectId,
+          billable_c: updateData.billable,
+          description_c: updateData.description,
+          auto_detected_c: updateData.autoDetected,
+          category_c: updateData.category,
+          Tags: Array.isArray(updateData.tags) ? updateData.tags.join(',') : updateData.tags
+        }]
+      };
+
+      const response = await apperClient.updateRecord('time_entry_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update time entries ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              throw new Error(`${error.fieldLabel}: ${error}`);
+            });
+            if (record.message) throw new Error(record.message);
+          });
+        }
+
+        if (successfulUpdates.length > 0) {
+          const entry = successfulUpdates[0].data;
+          return {
+            Id: entry.Id,
+            startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+            endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+            duration: entry.duration_c || 0,
+            project: entry.project_c?.Name || "Unknown Project",
+            projectId: entry.project_c?.Id || null,
+            tags: entry.Tags ? entry.Tags.split(',') : [],
+            billable: entry.billable_c || false,
+            description: entry.description_c || "",
+            autoDetected: entry.auto_detected_c || false,
+            category: entry.category_c || null
+          };
+        }
+      }
+      
+      throw new Error("Failed to update time entry");
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating time entry:", error?.response?.data?.message);
+        throw new Error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+        throw error;
+      }
     }
-    
-    timeEntries[index] = { ...timeEntries[index], ...updateData };
-    return { ...timeEntries[index] };
   },
 
   async delete(id) {
     await delay(200);
-    const index = timeEntries.findIndex(entry => entry.Id === parseInt(id));
-    
-    if (index === -1) {
-      throw new Error("Time entry not found");
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await apperClient.deleteRecord('time_entry_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success);
+
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete time entries ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
+          
+          failedDeletions.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+
+        return response.results.filter(result => result.success).length > 0;
+      }
+
+      return false;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting time entry:", error?.response?.data?.message);
+        throw new Error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+        throw error;
+      }
     }
-    
-    const deletedEntry = timeEntries.splice(index, 1)[0];
-    return { ...deletedEntry };
   },
 
   async getByDateRange(startDate, endDate) {
     await delay(250);
-    return timeEntries
-      .filter(entry => {
-        const entryDate = new Date(entry.startTime);
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        return entryDate >= start && entryDate <= end;
-      })
-      .map(entry => ({ ...entry }));
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "start_time_c" } },
+          { field: { Name: "end_time_c" } },
+          { field: { Name: "duration_c" } },
+          { field: { Name: "project_c" } },
+          { field: { Name: "billable_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "auto_detected_c" } },
+          { field: { Name: "category_c" } },
+          { field: { Name: "Tags" } }
+        ],
+        where: [
+          {
+            FieldName: "start_time_c",
+            Operator: "GreaterThanOrEqualTo",
+            Values: [new Date(startDate).toISOString()]
+          },
+          {
+            FieldName: "start_time_c",
+            Operator: "LessThanOrEqualTo", 
+            Values: [new Date(endDate).toISOString()]
+          }
+        ],
+        pagingInfo: {
+          limit: 1000,
+          offset: 0
+        }
+      };
+
+      const response = await apperClient.fetchRecords('time_entry_c', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      return response.data.map(entry => ({
+        Id: entry.Id,
+        startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+        endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+        duration: entry.duration_c || 0,
+        project: entry.project_c?.Name || "Unknown Project",
+        projectId: entry.project_c?.Id || null,
+        tags: entry.Tags ? entry.Tags.split(',') : [],
+        billable: entry.billable_c || false,
+        description: entry.description_c || "",
+        autoDetected: entry.auto_detected_c || false,
+        category: entry.category_c || null
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching time entries by date range:", error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return [];
+    }
   },
 
-async getActiveEntry() {
+  async getActiveEntry() {
     await delay(100);
-    const activeEntry = timeEntries.find(entry => !entry.endTime);
-    return activeEntry ? { ...activeEntry } : null;
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "start_time_c" } },
+          { field: { Name: "end_time_c" } },
+          { field: { Name: "duration_c" } },
+          { field: { Name: "project_c" } },
+          { field: { Name: "billable_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "auto_detected_c" } },
+          { field: { Name: "category_c" } },
+          { field: { Name: "Tags" } }
+        ],
+        where: [
+          {
+            FieldName: "end_time_c",
+            Operator: "DoesNotHaveValue",
+            Values: []
+          }
+        ],
+        pagingInfo: {
+          limit: 1,
+          offset: 0
+        }
+      };
+
+      const response = await apperClient.fetchRecords('time_entry_c', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return null;
+      }
+
+      const entry = response.data[0];
+      return {
+        Id: entry.Id,
+        startTime: entry.start_time_c ? new Date(entry.start_time_c).getTime() : Date.now(),
+        endTime: entry.end_time_c ? new Date(entry.end_time_c).getTime() : null,
+        duration: entry.duration_c || 0,
+        project: entry.project_c?.Name || "Unknown Project",
+        projectId: entry.project_c?.Id || null,
+        tags: entry.Tags ? entry.Tags.split(',') : [],
+        billable: entry.billable_c || false,
+        description: entry.description_c || "",
+        autoDetected: entry.auto_detected_c || false,
+        category: entry.category_c || null
+      };
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching active time entry:", error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return null;
+    }
   },
 
   // Goal management methods

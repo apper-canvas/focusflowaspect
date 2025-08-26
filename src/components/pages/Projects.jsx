@@ -65,7 +65,7 @@ const Projects = () => {
       };
 
       if (editingId) {
-        const updatedProject = await projectService.update(editingId, projectData);
+const updatedProject = await projectService.update(editingId, projectData);
         setProjects(projects.map(p => p.Id === editingId ? updatedProject : p));
         toast.success("Project updated successfully");
       } else {
@@ -82,7 +82,7 @@ const Projects = () => {
   };
 
   const handleEdit = (project) => {
-    setFormData({
+setFormData({
       name: project.name,
       client: project.client || "",
       hourlyRate: project.hourlyRate?.toString() || "",
@@ -104,7 +104,7 @@ const handleDelete = (id) => {
     
     setIsDeleting(true);
     try {
-      await projectService.delete(projectToDelete.Id);
+await projectService.delete(projectToDelete.Id);
       setProjects(projects.filter(p => p.Id !== projectToDelete.Id));
       toast.success("Project deleted successfully");
       setDeletePopupVisible(false);
@@ -168,23 +168,23 @@ const handleDelete = (id) => {
                     <div className="flex items-center space-x-4">
                       <div
                         className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: project.color }}
+style={{ backgroundColor: project.color }}
                       />
                       
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-gray-900 font-display">
-                          {project.name}
+{project.name}
                         </h3>
-                        {project.client && (
+{project.client && (
                           <p className="text-sm text-gray-600">Client: {project.client}</p>
                         )}
                         
                         <div className="flex items-center space-x-4 mt-2">
-                          <Badge variant={project.defaultBillable ? "billable" : "nonBillable"}>
+<Badge variant={project.defaultBillable ? "billable" : "nonBillable"}>
                             {project.defaultBillable ? "Billable" : "Non-billable"}
                           </Badge>
                           
-                          {project.hourlyRate > 0 && (
+{project.hourlyRate > 0 && (
                             <span className="text-sm text-gray-600">
                               ${project.hourlyRate}/hour
                             </span>
@@ -204,7 +204,7 @@ const handleDelete = (id) => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(project.Id)}
+onClick={() => handleDelete(project.Id)}
                         className="text-error hover:text-error"
                       >
                         <ApperIcon name="Trash2" size={16} />
@@ -315,14 +315,14 @@ const handleDelete = (id) => {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Billable Projects</span>
                 <span className="text-lg font-bold text-success">
-                  {projects.filter(p => p.defaultBillable).length}
+{projects.filter(p => p.defaultBillable).length}
                 </span>
               </div>
               
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Avg. Rate</span>
                 <span className="text-lg font-bold text-gray-900">
-                  ${projects.length > 0 
+${projects.length > 0 
                     ? (projects.reduce((sum, p) => sum + (p.hourlyRate || 0), 0) / projects.length).toFixed(0)
                     : 0
                   }

@@ -52,7 +52,7 @@ const ActivityFeed = ({ onEntryCreated }) => {
       
       // Create time entry from activity
       const timeEntry = await timeEntryService.create({
-        project: `${activity.category} - ${activity.app}`,
+project: `${activity.category} - ${activity.app}`,
         description: activity.context,
         tags: ['ai-detected', activity.category.toLowerCase(), activity.app.toLowerCase()],
         startTime: activity.timestamp - (activity.duration * 1000),

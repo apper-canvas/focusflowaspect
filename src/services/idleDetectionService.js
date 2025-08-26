@@ -17,7 +17,7 @@ class IdleDetectionService {
   }
 
   loadSettings() {
-    const settings = JSON.parse(localStorage.getItem('focusflow-settings') || '{}');
+const settings = JSON.parse(localStorage.getItem('focusflow-settings') || '{}');
     this.idleThreshold = (settings.idleDetectionMinutes || 5) * 60 * 1000;
     this.customPrompts = settings.idlePrompts || [
       "Away from keyboard?",
@@ -27,10 +27,9 @@ class IdleDetectionService {
     ];
     this.autoCategorizationEnabled = settings.autoIdleCategorization || false;
   }
-
   saveSettings(settings) {
     const currentSettings = JSON.parse(localStorage.getItem('focusflow-settings') || '{}');
-    const updatedSettings = { ...currentSettings, ...settings };
+const updatedSettings = { ...currentSettings, ...settings };
     localStorage.setItem('focusflow-settings', JSON.stringify(updatedSettings));
     this.loadSettings();
   }
@@ -128,7 +127,7 @@ class IdleDetectionService {
       const idleStartTime = now - (idleTimeSeconds * 1000);
 
       // Create idle time entry
-      const idleEntry = await timeEntryService.create({
+const idleEntry = await timeEntryService.create({
         projectId: activeEntry.projectId,
         description: `${category.label} (Auto-detected idle time)`,
         tags: [...(activeEntry.tags || []), 'idle-time', category.id],

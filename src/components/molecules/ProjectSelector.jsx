@@ -18,7 +18,7 @@ const ProjectSelector = ({
       >
         <option value="" disabled>{placeholder}</option>
         {projects.map(project => (
-          <option key={project.Id} value={project.name}>
+<option key={project.Id} value={project.name}>
             {project.name}
           </option>
         ))}
@@ -26,7 +26,7 @@ const ProjectSelector = ({
       {value && (
         <div 
           className="absolute right-8 top-1/2 transform -translate-y-1/2 w-3 h-3 rounded-full"
-          style={{ 
+style={{ 
             backgroundColor: projects.find(p => p.name === value)?.color || "#5B4FB6" 
           }}
         />

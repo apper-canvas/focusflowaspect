@@ -105,7 +105,7 @@ class ActivityDetectionService {
     const context = source.contexts[Math.floor(Math.random() * source.contexts.length)];
     
     const activity = {
-      id: `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+id: `activity-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       app: source.app,
       context,

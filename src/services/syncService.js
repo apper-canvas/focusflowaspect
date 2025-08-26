@@ -290,7 +290,7 @@ class SyncService {
     // Simple conflict resolution: prefer newer data
     const localData = await this.getLocalSyncData();
     
-    // Merge time entries
+// Merge time entries
     const mergedEntries = this.mergeTimeEntries(localData.timeEntries, remoteData.timeEntries);
     localStorage.setItem('focusflow-time-entries', JSON.stringify(mergedEntries));
     
@@ -305,11 +305,10 @@ class SyncService {
 
   mergeTimeEntries(local, remote) {
     const merged = [...local];
-    const localIds = new Set(local.map(entry => entry.Id));
-    
+const localIds = new Set(local.map(entry => entry.Id));
     remote.forEach(remoteEntry => {
       const existingIndex = merged.findIndex(entry => entry.Id === remoteEntry.Id);
-      if (existingIndex >= 0) {
+if (existingIndex >= 0) {
         // Conflict resolution: prefer newer modification time
         if (remoteEntry.lastModified > merged[existingIndex].lastModified) {
           merged[existingIndex] = remoteEntry;
@@ -328,9 +327,9 @@ class SyncService {
     
     remote.forEach(remoteProject => {
       const existingIndex = merged.findIndex(project => project.Id === remoteProject.Id);
-      if (existingIndex >= 0) {
+if (existingIndex >= 0) {
         if (remoteProject.lastModified > merged[existingIndex].lastModified) {
-          merged[existingIndex] = remoteProject;
+merged[existingIndex] = remoteProject;
         }
       } else {
         merged.push(remoteProject);
