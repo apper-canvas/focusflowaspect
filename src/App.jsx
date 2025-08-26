@@ -75,15 +75,13 @@ useEffect(() => {
 theme="light"
         />
 {idleState.isIdle && (
-          <div className="fixed inset-0 z-[60]">
-            <IdleDetectionPopup
-              isOpen={idleState.isIdle}
-              idleTime={idleState.idleTime}
-              customPrompt={idleState.customPrompt}
-              onCategorize={handleIdleCategorize}
-              onDismiss={handleIdleDismiss}
-            />
-          </div>
+          <IdleDetectionPopup
+            isVisible={idleState.isIdle}
+            idleTime={idleState.idleTime}
+            customPrompt={idleState.customPrompt}
+            onCategorize={handleIdleCategorize}
+            onDismiss={handleIdleDismiss}
+          />
         )}
       </div>
     </BrowserRouter>
