@@ -11,11 +11,21 @@ const Settings = () => {
     breakDuration: 5,
     longBreakDuration: 15,
     autoStart: false,
-soundNotifications: true,
+    soundNotifications: true,
     darkMode: false,
     weeklyGoal: 40,
     timezone: "local",
     exportFormat: "csv",
+    // Idle detection settings
+    idleDetectionEnabled: true,
+    idleDetectionMinutes: 5,
+    idlePrompts: [
+      "Away from keyboard?",
+      "Taking a break?", 
+      "Step away from your desk?",
+      "What were you up to?"
+    ],
+    autoIdleCategorization: false,
     // Calendar sync settings
     googleCalendarEnabled: false,
     outlookCalendarEnabled: false,
@@ -27,11 +37,12 @@ soundNotifications: true,
 
   const [activeSection, setActiveSection] = useState("pomodoro");
 
-  const sections = [
+const sections = [
     { id: "pomodoro", label: "Pomodoro Timer", icon: "Timer" },
     { id: "notifications", label: "Notifications", icon: "Bell" },
+    { id: "idle", label: "Idle Detection", icon: "Clock" },
     { id: "goals", label: "Goals & Targets", icon: "Target" },
-{ id: "privacy", label: "Privacy & Data", icon: "Shield" },
+    { id: "privacy", label: "Privacy & Data", icon: "Shield" },
     { id: "export", label: "Export Settings", icon: "Download" },
     { id: "calendar", label: "Calendar Sync", icon: "Calendar" }
   ];

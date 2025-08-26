@@ -16,7 +16,7 @@ export const timeEntryService = {
     return entry ? { ...entry } : null;
   },
 
-  async create(entryData) {
+async create(entryData) {
     await delay(300);
     const newId = Math.max(...timeEntries.map(entry => entry.Id), 0) + 1;
     const newEntry = {
@@ -25,7 +25,9 @@ export const timeEntryService = {
       startTime: entryData.startTime || Date.now(),
       endTime: entryData.endTime || null,
       duration: entryData.duration || 0,
-      autoDetected: entryData.autoDetected || false
+      autoDetected: entryData.autoDetected || false,
+      category: entryData.category || null,
+      tags: entryData.tags || []
     };
     
     timeEntries.push(newEntry);
@@ -68,11 +70,11 @@ export const timeEntryService = {
       .map(entry => ({ ...entry }));
   },
 
-  async getActiveEntry() {
+async getActiveEntry() {
     await delay(100);
     const activeEntry = timeEntries.find(entry => !entry.endTime);
     return activeEntry ? { ...activeEntry } : null;
-},
+  },
 
   // Goal management methods
   async getGoals() {

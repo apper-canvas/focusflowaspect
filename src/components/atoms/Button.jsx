@@ -8,9 +8,10 @@ const Button = React.forwardRef(({
   children, 
   ...props 
 }, ref) => {
-  const variants = {
+const variants = {
     primary: "bg-gradient-to-r from-primary to-secondary text-white hover:from-secondary hover:to-primary shadow-lg hover:shadow-xl",
     secondary: "bg-white text-primary border-2 border-primary hover:bg-surface hover:border-secondary",
+    outline: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400",
     ghost: "text-primary hover:bg-surface hover:text-secondary",
     danger: "bg-error text-white hover:bg-red-600 shadow-lg hover:shadow-xl",
     success: "bg-success text-white hover:bg-green-600 shadow-lg hover:shadow-xl"
