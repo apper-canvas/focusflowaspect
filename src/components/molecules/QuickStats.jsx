@@ -1,31 +1,52 @@
-import React from "react";
-import Card from "@/components/atoms/Card";
-import ApperIcon from "@/components/ApperIcon";
+import React, { useEffect, useState } from "react";
 import { formatDuration } from "@/utils/timeUtils";
+import ApperIcon from "@/components/ApperIcon";
+import Card from "@/components/atoms/Card";
 
 const QuickStats = ({ stats }) => {
+  const [goals, setGoals] = useState(null);
+
+  useEffect(() => {
+    const savedGoals = localStorage.getItem("focusflow-goals");
+    if (savedGoals) {
+      setGoals(JSON.parse(savedGoals));
+    }
+  }, []);
+
+  // Calculate goal progress
+  const todayHours = Math.round(stats.today / 3600 * 10) / 10;
+  const weekHours = Math.round(stats.week / 3600 * 10) / 10;
+  const dailyGoalProgress = goals ? Math.min((todayHours / goals.daily.workHours) * 100, 100) : 0;
+  const weeklyGoalProgress = goals ? Math.min((weekHours / goals.weekly.billableHours) * 100, 100) : 0;
+
   const statCards = [
     {
       title: "Today",
       value: formatDuration(stats.today || 0),
+      subtitle: goals ? `${Math.round(dailyGoalProgress)}% of ${goals.daily.workHours}h goal` : null,
       icon: "Clock",
-      color: "text-primary"
+      color: "text-primary",
+      progress: dailyGoalProgress
     },
     {
       title: "This Week",
       value: formatDuration(stats.week || 0),
+      subtitle: goals ? `${Math.round(weeklyGoalProgress)}% of ${goals.weekly.billableHours}h goal` : null,
       icon: "Calendar",
-      color: "text-secondary"
+      color: "text-secondary",
+      progress: weeklyGoalProgress
     },
     {
       title: "Billable",
       value: formatDuration(stats.billable || 0),
+      subtitle: stats.week > 0 ? `${Math.round((stats.billable / stats.week) * 100)}% of total time` : null,
       icon: "DollarSign",
       color: "text-success"
     },
     {
       title: "Active Projects",
       value: stats.activeProjects || 0,
+      subtitle: goals && goals.projects ? `${goals.projects.length} goal projects` : null,
       icon: "FolderOpen",
       color: "text-info"
     }

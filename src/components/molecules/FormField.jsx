@@ -37,12 +37,15 @@ const FormField = ({
     return <Input {...domProps} />;
   };
 
-  return (
+return (
     <div className={cn("space-y-1", className)}>
       {label && <Label>{label}</Label>}
       {renderField()}
       {error && (
         <p className="text-sm text-error font-medium">{error}</p>
+      )}
+      {(helpText || helptext) && !error && (
+        <p className="text-sm text-gray-600">{helpText || helptext}</p>
       )}
     </div>
   );
