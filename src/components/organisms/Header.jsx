@@ -5,8 +5,11 @@ import ApperIcon from "@/components/ApperIcon";
 import { AuthContext } from "@/App";
 
 const Header = ({ onMenuClick }) => {
+  // Extract logout function from AuthContext at component top level
+  const { logout } = useContext(AuthContext);
+  
   return (
-<header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 lg:hidden z-30">
+    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 lg:hidden z-30">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-3">
           <Button
@@ -28,7 +31,7 @@ const Header = ({ onMenuClick }) => {
           </div>
         </div>
 
-<div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
           {/* User Info */}
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center">
@@ -44,7 +47,6 @@ const Header = ({ onMenuClick }) => {
             variant="outline" 
             size="sm"
             onClick={() => {
-              const { logout } = useContext(AuthContext);
               logout();
             }}
             className="text-sm"
