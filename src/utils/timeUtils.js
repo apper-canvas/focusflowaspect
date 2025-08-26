@@ -258,6 +258,186 @@ export const checkGoalAchievements = (timeEntries, goals) => {
   return achievements;
 };
 export const calculateRemainingTime = (current, target) => {
+  if (!target || target <= 0) return 0;
+  return Math.max(target - current, 0);
+};
+
+export const formatGoalProgress = (current, target, unit = 'h') => {
+  const remaining = calculateRemainingTime(current, target);
+  const progress = calculateGoalProgress(current, target);
+  
+  if (progress >= 100) {
+    return {
+      message: `Goal exceeded by ${(current - target).toFixed(1)}${unit}! 🎉`,
+      status: 'exceeded',
+      color: 'success'
+    };
+  }
+  
+  if (remaining === 0) {
+    return {
+      message: 'Goal achieved! 🎯',
+      status: 'completed',
+      color: 'success'
+    };
+  }
+  
+  return {
+    message: `${remaining.toFixed(1)}${unit} remaining`,
+    status: progress >= 50 ? 'on-track' : 'behind',
+    color: progress >= 75 ? 'primary' : progress >= 50 ? 'info' : progress >= 25 ? 'warning' : 'error'
+  };
+};
+
+export const getWeeklyGoalInsights = (timeEntries, goals) => {
+  const insights = [];
+  const weekStart = getWeekStart();
+  const weekEntries = timeEntries.filter(entry => entry.startTime >= weekStart);
+  
+  if (!goals) return insights;
+  
+  const weekTime = weekEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+  const billableTime = weekEntries.filter(entry => entry.billable).reduce((sum, entry) => sum + (entry.duration || 0), 0);
+  
+  const daysIntoWeek = Math.ceil((Date.now() - weekStart) / (24 * 60 * 60 * 1000));
+  const expectedProgress = daysIntoWeek / 7;
+  
+  // Billable hours insight
+  if (goals.weekly?.billableHours) {
+    const billableProgress = billableTime / (goals.weekly.billableHours * 3600);
+    if (billableProgress < expectedProgress - 0.1) {
+      insights.push({
+        type: 'warning',
+        category: 'billable',
+        message: `Billable hours are ${Math.round((expectedProgress - billableProgress) * 100)}% behind weekly target`,
+        suggestion: 'Consider prioritizing billable tasks'
+      });
+    } else if (billableProgress > expectedProgress + 0.1) {
+      insights.push({
+        type: 'success',
+        category: 'billable',
+        message: `Excellent pace on billable hours - ${Math.round((billableProgress - expectedProgress) * 100)}% ahead`,
+        suggestion: 'Great momentum, keep it up!'
+      });
+    }
+  }
+  
+  // Project-specific insights
+  if (goals.projects?.length > 0) {
+    const projectTimes = {};
+    weekEntries.forEach(entry => {
+      if (entry.project) {
+        projectTimes[entry.project] = (projectTimes[entry.project] || 0) + entry.duration;
+      }
+    });
+    
+    goals.projects.forEach(project => {
+      const projectTime = projectTimes[project.name] || 0;
+      const projectProgress = projectTime / (project.weeklyTarget * 3600);
+      
+      if (projectProgress < expectedProgress - 0.15) {
+        insights.push({
+          type: 'warning',
+          category: 'project',
+          message: `${project.name} is behind schedule`,
+          suggestion: `Needs ${Math.ceil((project.weeklyTarget * expectedProgress * 3600 - projectTime) / 3600)}h to catch up`,
+          priority: project.priority
+        });
+      }
+    });
+  }
+  
+  return insights;
+};
+
+export const calculateDailyStreak = (timeEntries, goals) => {
+  if (!goals?.daily?.workHours) return 0;
+  
+  const today = getTodayStart();
+  let streak = 0;
+  let currentDay = today;
+  
+  // Look back up to 30 days
+  for (let i = 0; i < 30; i++) {
+    const dayStart = currentDay - (i * 24 * 60 * 60 * 1000);
+    const dayEnd = dayStart + (24 * 60 * 60 * 1000);
+    
+    const dayEntries = timeEntries.filter(entry => 
+      entry.startTime >= dayStart && entry.startTime < dayEnd
+    );
+    
+    const dayTime = dayEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0);
+    const dayHours = dayTime / 3600;
+    
+    if (dayHours >= goals.daily.workHours) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+};
+
+export const getMotivationalMessage = (progress, goalType, timeRemaining) => {
+  const messages = {
+    high: {
+      completed: [
+        "Outstanding! You've crushed your goal! 🚀",
+        "Incredible achievement! You're on fire! 🔥",
+        "Goal smashed! You're unstoppable! 💪"
+      ],
+      onTrack: [
+        "Excellent pace! You're right on target! 🎯",
+        "Perfect rhythm! Keep this momentum! ⚡",
+        "You're crushing it! Stay focused! 🌟"
+      ],
+      behind: [
+        "Time to focus! You've got this! 💪",
+        "Push through - success is within reach! 🚀",
+        "Turn up the intensity! You can catch up! 🔥"
+      ],
+      critical: [
+        "It's now or never! Give it everything! 💥",
+        "Crunch time! You can still make it! ⚡",
+        "Final push! Don't give up now! 🚨"
+      ]
+    },
+    medium: {
+      completed: [
+        "Great job! Goal achieved! 🎉",
+        "Well done! You made it! ✨",
+        "Success! Keep up the good work! 👏"
+      ],
+      onTrack: [
+        "Good progress! Stay the course! 📈",
+        "Nice work! You're on track! 👍",
+        "Steady progress! Keep going! 🎯"
+      ],
+      behind: [
+        "Time to pick up the pace! 🏃‍♂️",
+        "You can catch up! Stay focused! 💭",
+        "Push a bit harder! You've got this! 💪"
+      ],
+      critical: [
+        "Need to focus now! You can do it! 🚨",
+        "Time is running out! Push harder! ⏰",
+        "Last chance! Give it your all! 🔥"
+      ]
+    }
+  };
+  
+  const intensity = goalType === 'daily' ? 'high' : 'medium';
+  const status = progress >= 100 ? 'completed' : 
+                progress >= 75 ? 'onTrack' : 
+                progress >= 40 ? 'behind' : 'critical';
+  
+  const messageList = messages[intensity][status];
+  return messageList[Math.floor(Math.random() * messageList.length)];
+return messageList[Math.floor(Math.random() * messageList.length)];
+};
+
+export const calculateRemainingTimeBreakdown = (current, target) => {
   const remaining = Math.max(target - current, 0);
   return {
     hours: Math.floor(remaining),
