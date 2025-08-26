@@ -431,10 +431,8 @@ export const getMotivationalMessage = (progress, goalType, timeRemaining) => {
   const status = progress >= 100 ? 'completed' : 
                 progress >= 75 ? 'onTrack' : 
                 progress >= 40 ? 'behind' : 'critical';
-  
-  const messageList = messages[intensity][status];
+const messageList = messages[intensity][status];
   return messageList[Math.floor(Math.random() * messageList.length)];
-return messageList[Math.floor(Math.random() * messageList.length)];
 };
 
 export const calculateRemainingTimeBreakdown = (current, target) => {
