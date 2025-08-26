@@ -304,85 +304,84 @@ const GoalProgressDisplay = () => {
               <div className="text-2xl font-bold text-info">
                 {goals.projects ? goals.projects.length : 0}
               </div>
-              <div className="text-xs text-gray-600">Active Projects</div>
+<div className="text-xs text-gray-600">Active Projects</div>
             </div>
+          </div>
 </div>
-        </div>
       </div>
-    </Card>
 
-    {/* Achievement Dashboard */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 font-display mb-4">
-              Achievements & Insights
-            </h3>
-            
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-success/10 to-success/5 rounded-lg border border-success/20">
-                <div className="p-2 bg-success rounded-full">
-                  <ApperIcon name="Trophy" size={20} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">Goal Achieved!</p>
-                  <p className="text-sm text-gray-600">Completed daily focus sessions streak (7 days)</p>
-                </div>
-                <div className="text-xs text-success font-bold">+10 XP</div>
-              </div>
-              
-              <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg">
-                <div className="p-2 bg-primary rounded-full">
-                  <ApperIcon name="TrendingUp" size={20} className="text-white" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">Productivity Up 23%</p>
-                  <p className="text-sm text-gray-600">Compared to last week</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-warning/10 to-warning/5 rounded-lg">
-                <div className="p-2 bg-warning rounded-full">
-                  <ApperIcon name="Clock" size={20} className="text-white" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">Best Session Today</p>
-                  <p className="text-sm text-gray-600">2h 45m on FocusFlow Development</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-info/10 to-info/5 rounded-lg">
-                <div className="p-2 bg-info rounded-full">
-                  <ApperIcon name="Zap" size={20} className="text-white" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">Peak Hours</p>
-                  <p className="text-sm text-gray-600">Most productive: 9 AM - 11 AM</p>
-                </div>
-              </div>
+      {/* Achievement Dashboard */}
+      <Card className="p-6 mt-6">
+        <h3 className="text-lg font-semibold text-gray-900 font-display mb-4">
+          Achievements & Insights
+        </h3>
+        
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-success/10 to-success/5 rounded-lg border border-success/20">
+            <div className="p-2 bg-success rounded-full">
+              <ApperIcon name="Trophy" size={20} className="text-white" />
             </div>
-            
-            {/* Weekly Progress Summary */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-3">This Week's Progress</h4>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-success">85%</div>
-                  <div className="text-xs text-gray-600">Goals Met</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-primary">42.5h</div>
-                  <div className="text-xs text-gray-600">Total Time</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-secondary">12</div>
-                  <div className="text-xs text-gray-600">Sessions</div>
-                </div>
-              </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-900">Goal Achieved!</p>
+              <p className="text-sm text-gray-600">Completed daily focus sessions streak (7 days)</p>
             </div>
-          </Card>
+            <div className="text-xs text-success font-bold">+10 XP</div>
+          </div>
+          
+          <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg">
+            <div className="p-2 bg-primary rounded-full">
+              <ApperIcon name="TrendingUp" size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">Productivity Up 23%</p>
+              <p className="text-sm text-gray-600">Compared to last week</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-warning/10 to-warning/5 rounded-lg">
+            <div className="p-2 bg-warning rounded-full">
+              <ApperIcon name="Clock" size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">Best Session Today</p>
+              <p className="text-sm text-gray-600">2h 45m on FocusFlow Development</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-info/10 to-info/5 rounded-lg">
+            <div className="p-2 bg-info rounded-full">
+              <ApperIcon name="Zap" size={20} className="text-white" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900">Peak Hours</p>
+              <p className="text-sm text-gray-600">Most productive: 9 AM - 11 AM</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+        
+        {/* Weekly Progress Summary */}
+        <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg">
+          <h4 className="font-semibold text-gray-800 mb-3">This Week's Progress</h4>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-success">85%</div>
+              <div className="text-xs text-gray-600">Goals Met</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-primary">42.5h</div>
+              <div className="text-xs text-gray-600">Total Time</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-secondary">12</div>
+              <div className="text-xs text-gray-600">Sessions</div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Card>
   );
 };
+
+export default Reports;
 
 export default Reports;

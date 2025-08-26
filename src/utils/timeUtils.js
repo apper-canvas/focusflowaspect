@@ -99,10 +99,9 @@ export const generateTimeSlots = (startTime, endTime) => {
   while (current <= end) {
     slots.push({
       time: formatTime(current.getTime()),
-      timestamp: current.getTime()
-    });
+});
     current.setMinutes(current.getMinutes() + 30);
-}
+  }
   
   return slots;
 };
@@ -195,12 +194,12 @@ export const generateGoalRecommendations = (timeEntries, currentGoals = {}) => {
       type: 'project',
       project: topProject[0],
       goal: Math.ceil(topProject[1] / 3600 * 1.2), // 20% increase
-      reason: 'Your most active project this week'
+reason: 'Your most active project this week'
     });
-}
+  }
   
+  return recommendations;
 };
-
 export const checkGoalAchievements = (timeEntries, goals) => {
   const achievements = [];
   
@@ -259,12 +258,6 @@ export const checkGoalAchievements = (timeEntries, goals) => {
   
   return achievements;
 };
-// Goal Progress Calculation Utilities
-export const calculateGoalProgress = (current, target) => {
-  if (!target || target === 0) return 0;
-  return Math.min((current / target) * 100, 100);
-};
-
 export const getGoalStatus = (progress) => {
   if (progress >= 100) return { status: 'completed', color: 'success', message: 'Goal achieved!' };
   if (progress >= 80) return { status: 'on-track', color: 'primary', message: 'Excellent progress' };
@@ -491,7 +484,7 @@ export const getGoalInsights = (timeEntries, goals) => {
         action: `Need ${Math.round(dailyNeed * 10) / 10}h per day to catch up.`
       });
     }
-  }
+}
   
-return insights;
+  return insights;
 };
